@@ -1,5 +1,5 @@
 ## Ejercicio 1
-
+ 
 ### Inteligencia artifical débil y fuerte
 La hipótesis de que computadoras pueden <b>simular</b> ser inteligentes se denomina <b>hipótesis de inteligencia artifical débil</b>. Mientras que la hipótesis que sostiene que las computadoras que pueden pensar y no simular pensamiento, es denominada la <b>hipótesis de inteligencia artifical fuerte</b>
 
