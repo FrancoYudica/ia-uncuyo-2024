@@ -72,7 +72,7 @@ if __name__ == "__main__":
         default=0.25)
     
     args = parser.parse_args()
-
+    print(args)
     render = args.render
     fps = args.fps
     iterations_count = args.iterations
