@@ -3,6 +3,7 @@ import random
 
 _STATE_EMPTY = 0
 _STATE_DIRT = 1
+_STATE_WALKED = 2
 
 class Environment:
     def __init__(
@@ -16,6 +17,14 @@ class Environment:
 
         self.cells = []
         self.clean_all_cells()
+
+    @property
+    def dirty_cell_count(self):
+        return sum([column.count(_STATE_DIRT) for column in self.cells])
+
+    @property
+    def current_dirt_ratio(self):
+        return self.dirty_cell_count / (self.nrows * self.ncols)
 
     def clean_all_cells(self):
         self.cells.clear()
@@ -56,6 +65,13 @@ class Environment:
 
         return self.cells[row][column] == _STATE_DIRT
     
+    def is_cell_walked(self, row, column):
+        return self.cells[row][column] == _STATE_WALKED 
+
+    def walk_cell(self, row, column):
+        self.cells[row][column] = _STATE_WALKED
+
+
     def clean_cell(self, row, column):
 
         if not self.is_valid_position(row, column):
@@ -64,5 +80,5 @@ class Environment:
         if self.cells[row][column] != _STATE_DIRT:
             raise Exception(f"Shouldn't clean a cell that is already clean!")
         
-        self.cells[row][column] = _STATE_EMPTY
+        self.walk_cell(row, column)
 

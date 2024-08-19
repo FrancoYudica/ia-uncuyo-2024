@@ -46,6 +46,11 @@ class Agent:
 
     def think(self):
 
+        if self.env.is_cell_dirty(self.row, self.col):
+            self.env.clean_cell(self.row, self.col)
+
+        self.env.walk_cell(self.row, self.col)
+
         # Randomized thinking
         action_methods = []
 
@@ -64,5 +69,5 @@ class Agent:
             action_methods.append(self.left)
 
         # Executes the action
-        action_methods[randrange(0, 3)]()
+        action_methods[randrange(0, len(action_methods))]()
 
