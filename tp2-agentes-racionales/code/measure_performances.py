@@ -12,8 +12,6 @@ def save_results(results):
         for dr in results[size].keys():
             save_box_and_whiskers(results, size, dr, folder="../images/box_and_whiskers")
 
-
-
 class SimulationResults:
     def __init__(self) -> None:
         # Holds a list of size `iterations_count` with all
