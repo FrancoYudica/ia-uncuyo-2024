@@ -4,6 +4,8 @@ import random
 import time
 import os
 
+
+
 def print_environment(
         env: Environment,
         agent_position: tuple):
@@ -58,6 +60,7 @@ def run_simulation(
 
     # Runs main loop
     iteration = 0
+
     while iterations_count == 0 or iteration < iterations_count:
 
         env.walk_cell(agent.row, agent.col)

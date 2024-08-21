@@ -1,70 +1,29 @@
 from agents.simple_reflexive_agent import SimpleReflexiveAgent
 from agents.random_agent import RandomAgent
 from simulation import run_simulation
-import matplotlib.pyplot as plt
-
-def save_table(results):
-
-    # Prepare data for the table
-    columns = ['Environment size', 'Dirt ratio', 'Random agent', 'Simple reflex agent']
-    table_data = []
-
-    for size, dirt_ratios in results.items():
-        for dirt_ratio, performances in dirt_ratios.items():
-            row = [
-                size, 
-                dirt_ratio, 
-                round(performances['random_agent'], 3), 
-                round(performances['simple_reflex_agent'], 3)
-                ]
-            table_data.append(row)
-
-    # Create a figure and axis
-    fig, ax = plt.subplots(figsize=(8, 6))  # Adjust size as needed
-
-    # Hide the axes
-    ax.xaxis.set_visible(False) 
-    ax.yaxis.set_visible(False)
-    ax.set_frame_on(False)
-
-    # Create the table with column names
-    table = ax.table(cellText=table_data, colLabels=columns, cellLoc='center', loc='center')
-
-    # Customize table appearance
-    table.auto_set_font_size(False)
-    table.set_fontsize(10)
-
-    plt.savefig(f"results_table.png", bbox_inches="tight")
-
-
-def save_graphs(results):
-    # Iterate over each dirt ratio
-    for dirt_ratio in set(dr for size in results for dr in results[size]):
-        plt.figure(figsize=(10, 6))
-
-        # Prepare data for plotting
-        sizes = sorted(results.keys())
-        for agent in ['random_agent', 'simple_reflex_agent']:
-            y = [results[size][dirt_ratio][agent] for size in sizes if dirt_ratio in results[size]]
-
-            plt.plot(sizes, y, marker='o', label=f'{agent} (Dirt Ratio {dirt_ratio})')
-
-        # Add labels, title, and legend
-        plt.xlabel('Environment Size (Power of 2)')
-        plt.ylabel('Performance')
-        plt.title(f'Agent Performance vs Environment Size for Dirt Ratio {dirt_ratio}')
-
-        # Set x-axis to log scale with base 2
-        plt.xscale('log', base=2)
-        plt.legend()
-        plt.grid(True)
-        plt.savefig(f"results_dirt_ratio({dirt_ratio}).png")
+from plotting import save_graphs, save_table, save_box_and_whiskers
 
 
 def save_results(results):
-    save_table(results)
-    save_graphs(results)
+    save_table(results, folder="../images")
+    save_graphs(results, folder="../images/graphs")
 
+    for size in results.keys():
+        for dr in results[size].keys():
+            save_box_and_whiskers(results, size, dr, folder="../images/box_and_whiskers")
+
+
+
+class SimulationResults:
+    def __init__(self) -> None:
+        # Holds a list of size `iterations_count` with all
+        # the results of each iteration. This could be used
+        # for plotting
+        self.agent_performance = []
+
+    @property
+    def average_performance(self):
+        return sum(self.agent_performance) / len(self.agent_performance)
 
 if __name__ == "__main__":
 
@@ -77,8 +36,11 @@ if __name__ == "__main__":
         "env_dirt_ratio": 0.25,
         "verbose": False
     }
-    random_agent = RandomAgent()
-    reflexive_agent = SimpleReflexiveAgent()
+
+    test_agents = {
+        "random_agent": RandomAgent(),
+        "reflex_agent": SimpleReflexiveAgent()
+    }
 
     results = {}
 
@@ -90,37 +52,33 @@ if __name__ == "__main__":
         for dirt_ratio in [0.1, 0.2, 0.4, 0.8]:
             args["env_dirt_ratio"] = dirt_ratio
             
-            # Calculates the average performance over 'iterations_per_combination' iterations
-            avg_random_performance = 0
-            avg_reflexive_performance = 0
+            # For each agent
+            for agent_name in test_agents.keys():
+                agent = test_agents[agent_name]
+                agent_result = SimulationResults()
 
-            iterations_per_combination = 10
-            for i in range(iterations_per_combination):
-                args["env_seed"] = i
+                # Iterates 10 times
+                for i in range(10):
+                    args["env_seed"] = i
 
-                # Resets agent position
-                random_agent.row = random_agent.col = 0
-                reflexive_agent.row = reflexive_agent.col = 0
+                    # Resets agent position
+                    agent.row = agent.col = 0
 
-                # Unpacks common arguments and runs
-                random_agent_performance = run_simulation(**args, agent=random_agent)
-                reflexive_agent_performance = run_simulation(**args, agent=reflexive_agent)
+                    # Unpacks common arguments and runs
+                    agent_iter_performance = run_simulation(**args, agent=agent)
 
-                # Adds to average
-                avg_random_performance += random_agent_performance / iterations_per_combination
-                avg_reflexive_performance += reflexive_agent_performance / iterations_per_combination
+                    # Stores simulation result
+                    agent_result.agent_performance.append(agent_iter_performance)
 
-            if env_size not in results:
-                results[env_size] = {}
+                if env_size not in results:
+                    results[env_size] = {}
 
-            results[env_size][dirt_ratio] = {
-                "random_agent": avg_random_performance,
-                "simple_reflex_agent": avg_reflexive_performance
-            }
+                if dirt_ratio not in results[env_size]:
+                    results[env_size][dirt_ratio] = {}
 
-            # Debug print after each SIZE and DIRT_RATIO combination
-            print(f"Env({env_size}x{env_size}, dirt_ratio: {dirt_ratio}) \
-                  RandomAgentAvgPerformance: {avg_random_performance}    \
-                  ReflexiveAgentAvgPerformance: {avg_reflexive_performance}")
+                results[env_size][dirt_ratio][agent_name] = agent_result
+
+                print(f"Agent({agent_name}) Env({env_size}x{env_size}, dirt_ratio: {dirt_ratio}) \
+                    AvgPerformance: {agent_result.average_performance}")
     
     save_results(results)
