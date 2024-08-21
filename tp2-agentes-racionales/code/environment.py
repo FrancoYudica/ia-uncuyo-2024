@@ -32,6 +32,13 @@ class Environment:
         # Initializes cells as empty. Row major matrix
         self.cells = [[_STATE_EMPTY for _ in range(self.ncols)] for _ in range(self.nrows)]
 
+    def get_performance(self):
+        # Calculates the amount of dirt cells to satisfy the ratio
+        total_cell_count = self.nrows * self.ncols
+        total_dirt_cell_count = math.ceil(total_cell_count * self.dirt_ratio)
+
+        # Returns the remaining dirty cell count
+        return total_dirt_cell_count - self.dirty_cell_count
 
     def randomize(self, seed: int = None):
         
@@ -76,9 +83,6 @@ class Environment:
 
         if not self.is_valid_position(row, column):
             raise Exception(f"Cell clean out of bounds position ({row}, {column})")
-        
-        if self.cells[row][column] != _STATE_DIRT:
-            raise Exception(f"Shouldn't clean a cell that is already clean!")
         
         self.walk_cell(row, column)
 

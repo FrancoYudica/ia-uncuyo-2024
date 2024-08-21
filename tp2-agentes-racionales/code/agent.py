@@ -1,73 +1,54 @@
 from environment import Environment
-from random import randrange
 
 class Agent:
 
     def __init__(
             self,
-            row,
-            col,
-            env: Environment) -> None:
+            row = 0,
+            col = 0,
+            env: Environment = None) -> None:
         
         self.env: Environment = env
-
-        if not self.env.is_valid_position(row, col):
-            raise Exception("Trying to set initial position, but it's out of environment bounds")
-
         self.row = row
         self.col = col
 
     def up(self):
-        self.row -= 1
-        if not self.env.is_valid_position(self.row, self.col):
+        if not self.can_move_up():
             raise Exception("Trying to move out of environment")
+        self.row -= 1
         
     def down(self):
-        self.row += 1
-        if not self.env.is_valid_position(self.row, self.col):
+        if not self.can_move_down():
             raise Exception("Trying to move out of environment")
+        self.row += 1
     
     def right(self):
-        self.col += 1
-        if not self.env.is_valid_position(self.row, self.col):
+        if not self.can_move_right():
             raise Exception("Trying to move out of environment")
+        self.col += 1
         
     def left(self):
-        self.col -= 1
-        if not self.env.is_valid_position(self.row, self.col):
+        if not self.can_move_left():
             raise Exception("Trying to move out of environment")
-        
+        self.col -= 1
+    
+    def can_move_up(self):
+        return self.env.is_valid_position(self.row - 1, self.col)
+    
+    def can_move_down(self):
+        return self.env.is_valid_position(self.row + 1, self.col)
+
+    def can_move_left(self):
+        return self.env.is_valid_position(self.row, self.col - 1)
+    
+    def can_move_right(self):
+        return self.env.is_valid_position(self.row, self.col + 1)
+
     def clean(self):
         self.env.clean_cell(self.row, self.col)
 
-    def perspective(self):
-        # TODO: ??
-        pass
+    def perspective(self) -> bool:
+        return self.env.is_cell_dirty(self.row, self.col)
 
     def think(self):
-
-        if self.env.is_cell_dirty(self.row, self.col):
-            self.env.clean_cell(self.row, self.col)
-
-        self.env.walk_cell(self.row, self.col)
-
-        # Randomized thinking
-        action_methods = []
-
-        # Ensures that the available actions are valid and doesn't
-        # move the agent out of environment bounds
-        if self.row < self.env.nrows - 1:
-            action_methods.append(self.down)
-
-        if self.row > 0:
-            action_methods.append(self.up)
-
-        if self.col < self.env.ncols - 1:
-            action_methods.append(self.right)
-
-        if self.col > 0:
-            action_methods.append(self.left)
-
-        # Executes the action
-        action_methods[randrange(0, len(action_methods))]()
-
+        raise NotImplementedError("Subclasses must implement this method")
