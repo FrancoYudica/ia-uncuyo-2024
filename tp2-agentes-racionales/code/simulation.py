@@ -89,4 +89,4 @@ def run_simulation(
             print(f"Final dirt ratio: {env.current_dirt_ratio}")
         print(f"Time taken: {time.time() - t0}")
 
-    return env.get_performance()
+    return env.get_performance(), iteration

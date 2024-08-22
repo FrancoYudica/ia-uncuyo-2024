@@ -1,27 +1,42 @@
 from agents.simple_reflexive_agent import SimpleReflexiveAgent
 from agents.random_agent import RandomAgent
 from simulation import run_simulation
-from plotting import save_graphs, save_table, save_box_and_whiskers
+from plotting import save_graphs_performance, save_graphs_iterations, save_table, save_box_and_whiskers
 
 
 def save_results(results):
     save_table(results, folder="../images")
-    save_graphs(results, folder="../images/graphs")
+    save_graphs_performance(results, folder="../images/graphs/performance")
+    save_graphs_iterations(results, folder="../images/graphs/iterations")
 
     for size in results.keys():
-        for dr in results[size].keys():
-            save_box_and_whiskers(results, size, dr, folder="../images/box_and_whiskers")
+        # for dr in results[size].keys():
+            # save_box_and_whiskers(results, size, dr, folder="../images/box_and_whiskers")
+        save_box_and_whiskers(results, size, folder="../images/box_and_whiskers")
 
 class SimulationResults:
     def __init__(self) -> None:
         # Holds a list of size `iterations_count` with all
         # the results of each iteration. This could be used
         # for plotting
-        self.agent_performance = []
+        self.results = []
 
     @property
     def average_performance(self):
-        return sum(self.agent_performance) / len(self.agent_performance)
+        return sum(self.performances_list) / len(self.results)
+    
+    @property
+    def average_iterations(self):
+        return round(sum(self.iterations_list) / len(self.results))
+
+    @property
+    def performances_list(self):
+        return [performance for performance, _ in self.results]
+
+    @property 
+    def iterations_list(self):
+        return [iters for _, iters in self.results]
+
 
 if __name__ == "__main__":
 
@@ -63,10 +78,10 @@ if __name__ == "__main__":
                     agent.row = agent.col = 0
 
                     # Unpacks common arguments and runs
-                    agent_iter_performance = run_simulation(**args, agent=agent)
+                    agent_performance, iterations = run_simulation(**args, agent=agent)
 
                     # Stores simulation result
-                    agent_result.agent_performance.append(agent_iter_performance)
+                    agent_result.results.append((agent_performance, iterations))
 
                 if env_size not in results:
                     results[env_size] = {}
