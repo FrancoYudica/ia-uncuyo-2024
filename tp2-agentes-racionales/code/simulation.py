@@ -53,8 +53,12 @@ def run_simulation(
     env.randomize(env_seed)
 
     agent.env = env
+
     # Overrides env seed with random seed
     random.seed(None)
+
+    agent.row = random.randrange(0, env.nrows)
+    agent.col = random.randrange(0, env.ncols)
 
     t0 = time.time()
 
