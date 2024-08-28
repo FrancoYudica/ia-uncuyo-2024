@@ -1,62 +1,16 @@
 import gymnasium as gym
 import random
 from gymnasium import wrappers
-
-def generate_map(n: int,
-                 ice_ratio: float,
-                 seed: int) -> list:
-    SOURCE_SYMBOL = "S"
-    FROZEN_SYMBOL = "F"
-    HOLE_SYMBOL = "H"
-    GOAL_SYMBOL = "G"
-
-    # Matrix that holds symbols [["S", "H"], ["F", "G"]]
-    env_map = [[HOLE_SYMBOL] * n for _ in range(n)]
-
-    random.seed(seed)
-
-    def add_cell_random(cell_type):
-        pos = (random.randrange(0, n), random.randrange(0, n))
-        
-        # The random position should override holes
-        if env_map[pos[0]][pos[1]] != HOLE_SYMBOL:
-            return False
-        
-        # Sets the frozen cell
-        env_map[pos[0]][pos[1]] = cell_type
-        return True
-
-    # Adds source
-    add_cell_random(SOURCE_SYMBOL)
-
-    # Adds goal, ensuring it isn't placed over the SOURCE
-    while not add_cell_random(GOAL_SYMBOL):
-        pass
-
-    # Amount of ice cells
-    ice_cell_count = int(ice_ratio * n * n)
-    
-    # Adds all the required ice cells
-    current_ice_cell_count = 0
-    while current_ice_cell_count < ice_cell_count:
-        if add_cell_random(FROZEN_SYMBOL):
-            current_ice_cell_count += 1
-
-    random.seed(None)
-
-    # Transforms [["S", "H"], ["F", "G"]] to => ["SH", "FG"]
-    # This transformation is in the required environment format 
-    mapped = ["".join(sublist) for sublist in env_map]
-    return mapped
+from map import Map
 
 if __name__ == "__main__":
-    random_map = generate_map(5, 0.5, 0)
-    print(random_map)
+    map = Map(5, 0.5, 0)
+    print(map.map, map.start_pos, map.end_pos)
 
     # Environment setup
     env = gym.make(
         'FrozenLake-v1', 
-        desc=random_map, 
+        desc=map.map, 
         map_name="Test", 
         is_slippery=False)
     
