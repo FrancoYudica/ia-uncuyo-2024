@@ -1,8 +1,10 @@
 import random
 
 class Map:
+
     """Stores the randomly generated map, 
     alongside the start and end positions"""
+
     SOURCE_SYMBOL = "S"
     FROZEN_SYMBOL = "F"
     HOLE_SYMBOL = "H"
@@ -12,7 +14,7 @@ class Map:
                  n: int,
                  ice_ratio: float,
                  seed: int) -> None:
-        
+        self.n = n
         # Matrix that holds symbols [["S", "H"], ["F", "G"]]
         env_map = [[Map.HOLE_SYMBOL] * n for _ in range(n)]
 
@@ -53,3 +55,6 @@ class Map:
         # Transforms [["S", "H"], ["F", "G"]] to => ["SH", "FG"]
         # This transformation is in the required environment format 
         self.map = ["".join(sublist) for sublist in env_map]
+
+    def is_pos_valid(self, pos):
+        return pos[0] >= 0 and pos[0] < self.n and pos[1] >= 0 and pos[1] < self.n
