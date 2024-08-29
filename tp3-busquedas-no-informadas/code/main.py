@@ -4,6 +4,7 @@ from map import Map
 from algorithms.bfs import bfs
 from algorithms.dfs import dfs
 from algorithms.random_walk import random_walk
+from algorithms.ucs import ucs
 
 from algorithms.walk_results import WalkResults
 from common import build_path_from_actions
@@ -49,13 +50,14 @@ if __name__ == "__main__":
 
     algorithms = {
         # "BFS": bfs,
-        # "DFS": lambda map: dfs(map, None),
+        # "DFS": lambda map: dfs(map, 900),
         # "DFS Limited 10": lambda map: dfs(map, 10),
-        "Random walk": lambda map: random_walk(map)
+        # "Random walk": lambda map: random_walk(map)
+        "UCS": ucs
     }
 
     map = Map(
-        n=5,
+        n=100,
         hole_ratio=0.08,
         seed=10)
 
