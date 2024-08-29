@@ -1,8 +1,10 @@
 from map import Map
 from common import apply_action_to_position
 from copy import deepcopy
+from .walk_results import WalkResults
 
-def bfs(map: Map) -> list:
+
+def bfs(map: Map) -> WalkResults:
 
     # Creates a copy of the map
     walked_map = [[False for _ in range(map.n)] for _ in range(map.n)]
@@ -13,6 +15,9 @@ def bfs(map: Map) -> list:
     # Stores all the actions taken to reach each node from the start position
     actions = [[]]
     reached = False
+
+    results = WalkResults()
+    results.start_timing()
     while len(queued):
         position, actions_index = queued.pop(0)
 
@@ -22,27 +27,28 @@ def bfs(map: Map) -> list:
 
         for action in range(0, 4):
             
-            pos = apply_action_to_position(position, action)
+            child_pos = apply_action_to_position(position, action)
 
-            # When not in range
-            if not map.is_pos_valid(pos):
+            # When not in range or not walkable or already walked
+            if not map.is_pos_valid(child_pos) or \
+                not map.is_pos_walkable(child_pos) or \
+                walked_map[child_pos[0]][child_pos[1]]:
                 continue
             
-            # Already walked
-            if walked_map[pos[0]][pos[1]]:
-                continue
-            
-            walked_map[position[0]][position[1]] = True
+            walked_map[child_pos[0]][child_pos[1]] = True
 
             # Copies the parent path and adds it's position
-            path = deepcopy(actions[actions_index])
+            path = actions[actions_index][:]
             path.append(action)
 
-            queued.append((pos, len(actions)))
+            queued.append((child_pos, len(actions)))
 
             actions.append(path)
+        
+    results.stop_timing()
 
     if not reached:
         return None
     
-    return actions[-1]
+    results.actions = actions[actions_index]
+    return results

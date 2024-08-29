@@ -12,19 +12,19 @@ class Map:
 
     def __init__(self, 
                  n: int,
-                 ice_ratio: float,
+                 hole_ratio: float,
                  seed: int) -> None:
         self.n = n
         # Matrix that holds symbols [["S", "H"], ["F", "G"]]
-        env_map = [[Map.HOLE_SYMBOL] * n for _ in range(n)]
+        env_map = [[Map.FROZEN_SYMBOL] * n for _ in range(n)]
 
         random.seed(seed)
 
         def add_cell_random(cell_type):
             pos = (random.randrange(0, n), random.randrange(0, n))
             
-            # The random position should override holes
-            if env_map[pos[0]][pos[1]] != Map.HOLE_SYMBOL:
+            # The random position should override frozen cells
+            if env_map[pos[0]][pos[1]] != Map.FROZEN_SYMBOL:
                 return None
             
             # Sets the frozen cell
@@ -41,14 +41,14 @@ class Map:
             
         self.end_pos = end_pos
 
-        # Amount of ice cells
-        ice_cell_count = int(ice_ratio * n * n)
+        # Amount of hole cells
+        hole_cell_count = int(hole_ratio * n * n)
         
-        # Adds all the required ice cells
-        current_ice_cell_count = 0
-        while current_ice_cell_count < ice_cell_count:
-            if add_cell_random(Map.FROZEN_SYMBOL):
-                current_ice_cell_count += 1
+        # Adds all the required hole cells
+        current_hole_cell_count = 0
+        while current_hole_cell_count < hole_cell_count:
+            if add_cell_random(Map.HOLE_SYMBOL):
+                current_hole_cell_count += 1
 
         random.seed(None)
 
@@ -58,3 +58,6 @@ class Map:
 
     def is_pos_valid(self, pos):
         return pos[0] >= 0 and pos[0] < self.n and pos[1] >= 0 and pos[1] < self.n
+    
+    def is_pos_walkable(self, pos):
+        return self.map[pos[0]][pos[1]] != Map.HOLE_SYMBOL
