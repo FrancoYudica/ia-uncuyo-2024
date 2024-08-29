@@ -1,6 +1,5 @@
 from map import Map
 from common import apply_action_to_position
-from copy import deepcopy
 from .walk_results import WalkResults
 
 
@@ -48,7 +47,6 @@ def bfs(map: Map) -> WalkResults:
     # Traverses backwards the reached nodes matrix to gather all the actions
     current_pos = map.end_pos
 
-    # Stores the path from the end goal to the start goal
     while True:
 
         # Gets the action taken to reach the current position, and parent position

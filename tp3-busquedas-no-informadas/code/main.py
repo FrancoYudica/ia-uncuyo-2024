@@ -2,6 +2,9 @@ import gymnasium as gym
 from gymnasium import wrappers
 from map import Map
 from algorithms.bfs import bfs
+from algorithms.dfs import dfs
+from algorithms.random_walk import random_walk
+
 from algorithms.walk_results import WalkResults
 from common import build_path_from_actions
 import time
@@ -45,11 +48,14 @@ if __name__ == "__main__":
     results = None
 
     algorithms = {
-        "BFS": bfs
+        # "BFS": bfs,
+        # "DFS": lambda map: dfs(map, None),
+        # "DFS Limited 10": lambda map: dfs(map, 10),
+        "Random walk": lambda map: random_walk(map)
     }
 
     map = Map(
-        n=50,
+        n=5,
         hole_ratio=0.08,
         seed=10)
 
