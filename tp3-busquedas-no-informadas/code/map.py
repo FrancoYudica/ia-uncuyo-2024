@@ -15,6 +15,8 @@ class Map:
                  hole_ratio: float,
                  seed: int) -> None:
         self.n = n
+        self.hole_ratio = hole_ratio
+        self.seed = seed
         # Matrix that holds symbols [["S", "H"], ["F", "G"]]
         env_map = [[Map.FROZEN_SYMBOL] * n for _ in range(n)]
 

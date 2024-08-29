@@ -28,10 +28,7 @@ def render_results(
 
     done = truncated = False
     for action in results.actions:
-        next_state, _, done, truncated, _ = env.step(action)
-
-        print(f"- Executed action {action} - Next state {next_state}")
-
+        _, _, done, truncated, _ = env.step(action)
         env.render()
         time.sleep(1.0 / 5.0)
     
@@ -52,20 +49,23 @@ if __name__ == "__main__":
     }
 
     map = Map(
-        n=100,
+        n=50,
         hole_ratio=0.08,
         seed=10)
+
+    print(f"Executing algorithms on Map(n={map.n}, hole_ratio={map.hole_ratio}, seed={map.seed})")
 
     for algorithm_name in algorithms:
 
         algorithm_function = algorithms[algorithm_name]
-        print(f"Executing algorithm: {algorithm_name}")
+        print(f"    * Executing algorithm: {algorithm_name}")
         results = algorithm_function(map)
 
         if results is not None:
-            print(results.time_taken)
-            print(results.total_cost)
+            print(f"        - Time taken {results.time_taken}")
+            print(f"        - Total cost (Amount of actions) {results.calculate_cost(False)}")
+            print(f"        - Total cost by actions {results.calculate_cost(True)}")
             render_results(map, results)
         else:
-            print(f"Algorithm {algorithm_name} couldn't reach goal...")
+            print(f"     Algorithm {algorithm_name} couldn't reach goal...")
 

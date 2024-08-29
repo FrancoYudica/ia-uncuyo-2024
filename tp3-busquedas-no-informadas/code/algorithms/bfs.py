@@ -6,20 +6,20 @@ from .walk_results import WalkResults
 
 def bfs(map: Map) -> WalkResults:
 
-    # Creates a copy of the map
-    walked_map = [[False for _ in range(map.n)] for _ in range(map.n)]
-    
-    # Stores the position to explore alongside the parent actions index
-    queued = [(map.start_pos, 0)]
-    
-    # Stores all the actions taken to reach each node from the start position
-    actions = [[]]
+    # Stores the last action used to reach the node and the parent position
+    reached_nodes = [[None for _ in range(map.n)] for _ in range(map.n)]
+    reached_nodes[map.start_pos[0]][map.start_pos[1]] = (None, None)
+
+    # Stores the positions to explore
+    queued = [map.start_pos]
+
     reached = False
 
     results = WalkResults()
     results.start_timing()
+    
     while len(queued):
-        position, actions_index = queued.pop(0)
+        position = queued.pop(0)
 
         reached = position == map.end_pos 
         if reached:
@@ -32,23 +32,32 @@ def bfs(map: Map) -> WalkResults:
             # When not in range or not walkable or already walked
             if not map.is_pos_valid(child_pos) or \
                 not map.is_pos_walkable(child_pos) or \
-                walked_map[child_pos[0]][child_pos[1]]:
+                reached_nodes[child_pos[0]][child_pos[1]] is not None:
                 continue
             
-            walked_map[child_pos[0]][child_pos[1]] = True
+            # Stores the action taken to reach the node
+            reached_nodes[child_pos[0]][child_pos[1]] = (action, position)
 
-            # Copies the parent path and adds it's position
-            path = actions[actions_index][:]
-            path.append(action)
-
-            queued.append((child_pos, len(actions)))
-
-            actions.append(path)
+            queued.append(child_pos)
         
     results.stop_timing()
 
     if not reached:
         return None
     
-    results.actions = actions[actions_index]
+    # Traverses backwards the reached nodes matrix to gather all the actions
+    current_pos = map.end_pos
+
+    # Stores the path from the end goal to the start goal
+    while True:
+
+        # Gets the action taken to reach the current position, and parent position
+        action_taken, current_pos = reached_nodes[current_pos[0]][current_pos[1]]
+
+        # Only is None when it's the start
+        if action_taken is None:
+            break
+
+        results.actions.insert(0, action_taken)
+
     return results
