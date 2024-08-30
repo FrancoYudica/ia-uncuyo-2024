@@ -5,6 +5,7 @@ from algorithms.bfs import bfs
 from algorithms.dfs import dfs
 from algorithms.random_walk import random_walk
 from algorithms.ucs import ucs
+from algorithms.a_star import a_star
 
 from algorithms.walk_results import WalkResults
 from common import build_path_from_actions
@@ -49,11 +50,12 @@ if __name__ == "__main__":
     results = None
 
     algorithms = {
-        # "BFS": bfs,
-        # "DFS": lambda map: dfs(map, 900),
-        # "DFS Limited 10": lambda map: dfs(map, 10),
-        # "Random walk": lambda map: random_walk(map)
-        "UCS": ucs
+        "BFS": bfs,
+        "DFS": lambda map: dfs(map, 900),
+        "DFS Limited 10": lambda map: dfs(map, 10),
+        "Random walk": lambda map: random_walk(map),
+        "UCS": ucs,
+        "A*": a_star
     }
 
     map = Map(
@@ -73,7 +75,7 @@ if __name__ == "__main__":
             print(f"        - Time taken {results.time_taken}")
             print(f"        - Total cost (Amount of actions) {results.calculate_cost(False)}")
             print(f"        - Total cost by actions {results.calculate_cost(True)}")
-            render_results(map, results)
+            # render_results(map, results)
         else:
             print(f"     Algorithm {algorithm_name} couldn't reach goal...")
 
