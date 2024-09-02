@@ -60,6 +60,7 @@ def a_star(map: Map) -> WalkResults:
 
         # No longer in frontier
         cell.in_frontier = False
+        results.explored_cells += 1
 
         reached = position == map.end_pos
         if reached:

@@ -64,7 +64,7 @@ if __name__ == "__main__":
         seed=10)
 
     print(f"Executing algorithms on Map(n={map.n}, hole_ratio={map.hole_ratio}, seed={map.seed})")
-
+    
     for algorithm_name in algorithms:
 
         algorithm_function = algorithms[algorithm_name]

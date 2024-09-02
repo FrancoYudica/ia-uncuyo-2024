@@ -4,7 +4,7 @@ from time import time
 class WalkResults:
     def __init__(self) -> None:
         self.actions = []
-
+        self.explored_cells = 0
         # When the cost of each action is the
         # action number itself
         self._t0 = 0

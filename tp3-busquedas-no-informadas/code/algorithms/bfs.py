@@ -19,6 +19,7 @@ def bfs(map: Map) -> WalkResults:
     
     while len(queued):
         position = queued.pop(0)
+        results.explored_cells += 1
 
         reached = position == map.end_pos 
         if reached:

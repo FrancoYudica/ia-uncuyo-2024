@@ -54,6 +54,7 @@ def ucs(map: Map) -> WalkResults:
         
         cell = reached_nodes[position[0]][position[1]]
         cell.in_frontier = False
+        results.explored_cells += 1
 
         # When a the goal is reached and the current costs are getting
         # higher, it means that there aren't any other paths with lower

@@ -13,11 +13,13 @@ def dfs(
             current_position, 
             reached_nodes,
             current_recursion_depth,
-            max_recursion_depth):
+            max_recursion_depth,
+            results: WalkResults):
         
         if max_recursion_depth is not None and current_recursion_depth > max_recursion_depth:
             return False
 
+        results.explored_cells += 1
         # Reached target node
         if current_position == map.end_pos:
             return True
@@ -61,7 +63,8 @@ def dfs(
         current_position=map.start_pos,
         reached_nodes=reached_nodes,
         current_recursion_depth=0,
-        max_recursion_depth=max_recursion_depth)
+        max_recursion_depth=max_recursion_depth,
+        results=results)
 
 
     results.stop_timing()
