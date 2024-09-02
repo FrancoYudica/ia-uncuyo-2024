@@ -44,7 +44,8 @@ def dfs(
                 current_position=child_pos, 
                 reached_nodes=reached_nodes,
                 current_recursion_depth=current_recursion_depth + 1,
-                max_recursion_depth=max_recursion_depth):
+                max_recursion_depth=max_recursion_depth,
+                results=results):
 
                 return True
         

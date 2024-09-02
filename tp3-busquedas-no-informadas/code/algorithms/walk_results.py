@@ -27,4 +27,4 @@ class WalkResults:
             return len(self.actions)
         
         # When each action costs 1 + action index
-        return sum([1 + action for action in self.actions])
+        return len(self.actions) + sum(self.actions)
