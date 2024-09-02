@@ -85,10 +85,10 @@ if __name__ == "__main__":
     algorithms = {
         "BFS": bfs,
         "DFS": lambda map: dfs(map, 900),
-        "DFS Limited 10": lambda map: dfs(map, 10),
-        "Random walk": lambda map: random_walk(map),
+        "DLS (10)": lambda map: dfs(map, 10),
         "UCS": ucs,
-        "A*": a_star
+        "A*": a_star,
+        "Random walk": lambda map: random_walk(map)
     }
     
     all_results = {algo_name: [] for algo_name in algorithms.keys()}
@@ -107,14 +107,7 @@ if __name__ == "__main__":
             algorithm_function = algorithms[algorithm_name]
             print(f"    * Executing algorithm: {algorithm_name}")
             results = algorithm_function(map)
-
-            if results is not None:
-                all_results[algorithm_name].append(results)
-                # render_results(map, results)
-            else:
-                results = WalkResults()
-                all_results[algorithm_name].append(results)
-                print(f"            {algorithm_name} couldn't reach goal...")
+            all_results[algorithm_name].append(results)
 
     save_csv(all_results, "../no-informada-results.csv")
 

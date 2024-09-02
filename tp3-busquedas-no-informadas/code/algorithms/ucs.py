@@ -112,7 +112,7 @@ def ucs(map: Map) -> WalkResults:
     results.stop_timing()
 
     if not reached:
-        return None
+        return results
     
     # Traverses backwards the reached nodes matrix to gather all the actions
     current_pos = map.end_pos
