@@ -77,7 +77,7 @@ def ucs(map: Map) -> WalkResults:
                 not map.is_pos_walkable(child_pos):
                 continue
             
-            child_cost = cost + action
+            child_cost = cost + action + 1
             child_cell: Cell = reached_nodes[child_pos[0]][child_pos[1]]
 
             # Cell reached for the first time
