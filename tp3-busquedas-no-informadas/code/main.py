@@ -68,7 +68,9 @@ if __name__ == "__main__":
             algorithm_function = algorithms[algorithm_name]
             print(f"    * Executing algorithm: {algorithm_name}")
             results = algorithm_function(map)
-            all_results[algorithm_name].append(results)
+
+            if results.reached:
+                all_results[algorithm_name].append(results)
 
     save_csv(all_results, "../no-informada-results.csv")
 

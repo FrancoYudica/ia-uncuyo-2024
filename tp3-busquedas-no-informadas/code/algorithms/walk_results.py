@@ -20,6 +20,10 @@ class WalkResults:
     def time_taken(self):
         return self._t1 - self._t0
     
+    @property
+    def reached(self):
+        return len(self.actions) > 0
+    
     def calculate_cost(self, cost_by_action=False):
         
         # When each action costs 1
