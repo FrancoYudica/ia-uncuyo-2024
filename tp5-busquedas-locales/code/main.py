@@ -22,6 +22,21 @@ def hill_climb_test(board):
         print(f"Failure. Stuck at {result.board.cached_threats} threats")
 
 
+def hill_climb_success_rate_test(
+        board, 
+        iterations):
+
+    success_count = 0
+
+    for _ in range(iterations):
+        result: LocalSearchResult = hill_climb(board)
+
+        if result.board.cached_threats == 0:
+            success_count += 1
+
+    print(f"Success count {success_count}/{iterations}. Success rate: {success_count/iterations}")    
+
+
 
 def random_restart_hill_climb_test(board):
     print("RUNNING: RANDOM RESTART HILL CLIMB")
@@ -33,9 +48,11 @@ def random_restart_hill_climb_test(board):
 
 
 if __name__ == "__main__":
-    board = ChessBoardState(20)
-    hill_climb_test(board)
-    random_restart_hill_climb_test(board)
+    board = ChessBoardState(8)
+
+    hill_climb_success_rate_test(board, 1000)
+    # hill_climb_test(board)
+    # random_restart_hill_climb_test(board)
 
     # for i in range(iterations):
 
