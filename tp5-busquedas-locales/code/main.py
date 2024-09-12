@@ -1,112 +1,54 @@
 from chess_board_state import ChessBoardState
 from typing import List
 import random
+import time
+from local_search_algo.local_search_result import LocalSearchResult
 
-def random_successor_chess_board(board: ChessBoardState) -> ChessBoardState:
-    columns = board.columns.copy()
-
-    # Picks random column to move
-    randomize_column_index = random.randrange(0, board.size)
-
-    previous_row = columns[randomize_column_index]
-
-    # Picks a random new row value different than previous
-    new_row = random.choice([i for i in range(0, board.size) if i != previous_row])
-
-    columns[randomize_column_index] = new_row
-
-    successor = ChessBoardState(None, None, columns=columns)
-    return successor
+from local_search_algo.hill_climb.random_restart_hill_climb import hill_climb
+from local_search_algo.hill_climb.random_restart_hill_climb import random_restart_hill_climb
 
 
-def all_successors(board: ChessBoardState) -> List[ChessBoardState]:
-    """
-    Will return a list of N*(N-1) successors.
-    These are immediate successors, taking just one move to reach
-    """
-    successors: List[ChessBoardState] = []
+def hill_climb_test(board):
+    print("RUNNING: HILL CLIMB")
+    result: LocalSearchResult = hill_climb(board)
 
-    for column in range(board.size):
-        for row in range(board.size):
-            
-            # Skips when it's the same as the parent
-            if board.columns[column] == row:
-                continue
+    print(f"Hill climb traversed {result.traversed_states} states in {result.time_taken} seconds")
 
-            columns = board.columns.copy()
+    if result.board.cached_threats == 0:
+        print("Success")
+        print(result.board)
 
-            # Moves just one to the current position
-            columns[column] = row
-            successor = ChessBoardState(None, None, columns=columns)
-            successors.append(successor)
-
-    return successors
+    else:
+        print(f"Failure. Stuck at {result.board.cached_threats} threats")
 
 
-def hill_climb(
-        initial_board: ChessBoardState,
-        maximum_states: int = 30,
-        maximum_shoulder_iterations: int = 10):
 
-    current_board = initial_board
+def random_restart_hill_climb_test(board):
+    print("RUNNING: RANDOM RESTART HILL CLIMB")
 
-    # Used to avoid large loop over shoulder
-    consecutive_shoulder_count = 0
+    result: LocalSearchResult = random_restart_hill_climb(board)
 
-    for _ in range(maximum_states):
-
-        current_threats = current_board.cached_threats
-        
-        if current_threats == 0:
-            break
-
-        successors = all_successors(current_board)
-        successors.sort(key=lambda b: b.cached_threats)
-
-        better_equal_successors = [successor for successor in successors if successor.cached_threats <= current_threats]
-
-        if len(better_equal_successors) == 0:
-            print("Local maximum reached!")
-            break
-        
-        # Swaps for successor
-        current_board = better_equal_successors[0]
-
-        # When in shoulder
-        if current_board.cached_threats == current_threats:
-            print("Shoulder reached!")
-            consecutive_shoulder_count += 1
-
-            # Shoulder iteration limit reached
-            if consecutive_shoulder_count == maximum_shoulder_iterations:
-                print("Maximum shoulder iteration limit reached...")
-                break
-
-        else:
-            print("Better successor found!")
-            consecutive_shoulder_count = 0
-
-
-    return current_board
+    print(f"Random restart hill climb traversed {result.traversed_states} states in {result.time_taken} seconds")
+    print(result.board)
 
 
 if __name__ == "__main__":
+    board = ChessBoardState(20)
+    hill_climb_test(board)
+    random_restart_hill_climb_test(board)
 
-    success_count = 0
-    iterations = 1000
-    for i in range(iterations):
+    # for i in range(iterations):
 
-        board = ChessBoardState(8)
         
-        final_board = hill_climb(
-            initial_board=board, 
-            maximum_states=100,
-            maximum_shoulder_iterations=30)
+    #     final_board = hill_climb(
+    #         initial_board=board, 
+    #         maximum_states=30,
+    #         maximum_shoulder_iterations=10)
         
-        if final_board.cached_threats == 0:
-            success_count += 1
+    #     if final_board.cached_threats == 0:
+    #         success_count += 1
 
-    print(f"Success ratio: {success_count / iterations}")
+    # print(f"Success ratio: {success_count / iterations}")
     # final_board = hill_climb(
     #     initial_board=board, 
     #     maximum_states=5,
