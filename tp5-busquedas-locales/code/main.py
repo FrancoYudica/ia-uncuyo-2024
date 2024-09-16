@@ -20,18 +20,23 @@ def hill_climb_test(board):
 
 
 def hill_climb_success_rate_test(
-        board, 
-        iterations):
+        random_board_count,
+        board_size, 
+        iterations_per_board):
 
     success_count = 0
 
-    for _ in range(iterations):
-        result: LocalSearchResult = hill_climb(board)
+    for _ in range(random_board_count):
+        board = ChessBoardState(board_size)
 
-        if result.board.cached_threats == 0:
-            success_count += 1
+        for _ in range(iterations_per_board):
+            result: LocalSearchResult = hill_climb(board)
 
-    print(f"Success count {success_count}/{iterations}. Success rate: {success_count/iterations}")    
+            if result.board.cached_threats == 0:
+                success_count += 1
+
+    total_samples = random_board_count * iterations_per_board
+    print(f"Success count {success_count}/{total_samples}. Success rate: {success_count/total_samples}")    
 
 
 
@@ -46,4 +51,4 @@ def random_restart_hill_climb_test(board):
 
 if __name__ == "__main__":
     board = ChessBoardState(8)
-    hill_climb_success_rate_test(board, 1000)
+    hill_climb_success_rate_test(20, 8, 30)
