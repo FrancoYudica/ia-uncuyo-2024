@@ -3,6 +3,7 @@ from local_search_algo.local_search_result import LocalSearchResult
 
 from local_search_algo.hill_climb.random_restart_hill_climb import hill_climb
 from local_search_algo.hill_climb.random_restart_hill_climb import random_restart_hill_climb
+from local_search_algo.simulated_annealing.simulated_annealing import simulated_annealing
 
 
 def hill_climb_test(board):
@@ -39,6 +40,19 @@ def hill_climb_success_rate_test(
     print(f"Success count {success_count}/{total_samples}. Success rate: {success_count/total_samples}")    
 
 
+def simulated_annealing_test(board):
+    print("RUNNING: SIMULATED ANNEALING")
+    result: LocalSearchResult = simulated_annealing(board, maximum_states=60)
+
+    print(f"Traversed {result.traversed_states} states in {result.time_taken} seconds")
+
+    if result.board.cached_threats == 0:
+        print("Success")
+        print(result.board)
+
+    else:
+        print(f"Failure. Stuck at {result.board.cached_threats} threats")
+
 
 def random_restart_hill_climb_test(board):
     print("RUNNING: RANDOM RESTART HILL CLIMB")
@@ -50,5 +64,6 @@ def random_restart_hill_climb_test(board):
 
 
 if __name__ == "__main__":
+    # hill_climb_success_rate_test(20, 8, 30)
     board = ChessBoardState(8)
-    hill_climb_success_rate_test(20, 8, 30)
+    simulated_annealing_test(board)
