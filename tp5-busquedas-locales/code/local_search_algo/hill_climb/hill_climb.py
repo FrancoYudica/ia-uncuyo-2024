@@ -18,6 +18,7 @@ def hill_climb(
     consecutive_shoulder_count = 0
 
     for _ in range(maximum_states):
+        search_result.h_values.append(current_board.cached_threats)
         search_result.traversed_states += 1
         current_threats = current_board.cached_threats
         

@@ -13,14 +13,15 @@ def schedule(t) -> float:
 
 def simulated_annealing(
         initial_board: ChessBoardState,
-        maximum_states: int = 30,
-        maximum_shoulder_iterations: int = 10) -> LocalSearchResult:
+        maximum_states: int = 30) -> LocalSearchResult:
 
     search_result = LocalSearchResult()
     t0 = time.time()
     current_board = initial_board
 
     for t in range(1, maximum_states + 1):
+        search_result.h_values.append(current_board.cached_threats)
+
         search_result.traversed_states += 1
         T = schedule(t)
 
