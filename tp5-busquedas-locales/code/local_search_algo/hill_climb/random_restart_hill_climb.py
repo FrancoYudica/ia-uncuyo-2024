@@ -23,6 +23,7 @@ def random_restart_hill_climb(
             maximum_shoulder_iterations=maximum_shoulder_iterations)
         
         rr_result.traversed_states += hill_climb_result.traversed_states
+        rr_result.h_values.extend(hill_climb_result.h_values)
 
         if hill_climb_result.board.cached_threats == 0:
             hill_success_result = hill_climb_result
