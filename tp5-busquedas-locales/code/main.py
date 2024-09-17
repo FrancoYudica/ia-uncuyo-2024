@@ -98,9 +98,9 @@ def test_and_save():
     queen_counts = [4, 8, 10, 12, 15]
 
     algorithms = {
-        "hill_climb": lambda board: hill_climb(board, maximum_states=100, maximum_shoulder_iterations=20),
-        "random_restart_hill_climb": lambda board: random_restart_hill_climb(board, maximum_states=100, maximum_shoulder_iterations=20),
-        "simulated_annealing": lambda board: simulated_annealing(board, maximum_states=100)
+        "hill_climb": lambda board: hill_climb(board, maximum_states=100, maximum_shoulder_iterations=10),
+        "random_restart_hill_climb": lambda board: random_restart_hill_climb(board, maximum_states=100, maximum_shoulder_iterations=10),
+        "simulated_annealing": lambda board: simulated_annealing(board, maximum_states=100, maximum_shoulder_iterations=10)
     }
 
     results = {algorithm_name: [] for algorithm_name in algorithms.keys()}
@@ -120,3 +120,8 @@ def test_and_save():
 
 if __name__ == "__main__":
     test_and_save()
+
+    # board = ChessBoardState(8)
+    # simulated_annealing_test(board)
+
+
