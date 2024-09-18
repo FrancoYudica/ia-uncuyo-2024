@@ -90,6 +90,10 @@ def _save_results(results, queen_counts):
                 elif local_search_result.board.cached_threats < best_result.board.cached_threats:
                     best_result = local_search_result
 
+                elif local_search_result.board.cached_threats == best_result.board.cached_threats:
+                    if local_search_result.traversed_states < best_result.traversed_states:
+                        best_result = local_search_result
+
             plot_h_values(best_result, f"../images/h_values/{algorithm_name}/queen_count={queen_count}.png")
 
 
