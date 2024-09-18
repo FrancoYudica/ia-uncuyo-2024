@@ -42,7 +42,7 @@ def hill_climb_success_rate_test(
 
 def simulated_annealing_test(board):
     print("RUNNING: SIMULATED ANNEALING")
-    result: LocalSearchResult = simulated_annealing(board, maximum_states=60)
+    result: LocalSearchResult = simulated_annealing(board, maximum_states=600)
 
     print(f"Traversed {result.traversed_states} states in {result.time_taken} seconds")
 
@@ -100,11 +100,11 @@ def _save_results(results, queen_counts):
 def test_and_save():
 
     queen_counts = [4, 8, 10, 12, 15]
-
+    maximum_states = 1000
     algorithms = {
-        "hill_climb": lambda board: hill_climb(board, maximum_states=100, maximum_shoulder_iterations=10),
-        "random_restart_hill_climb": lambda board: random_restart_hill_climb(board, maximum_states=100, maximum_shoulder_iterations=10),
-        "simulated_annealing": lambda board: simulated_annealing(board, maximum_states=100, maximum_shoulder_iterations=10)
+        "hill_climb": lambda board: hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
+        # "random_restart_hill_climb": lambda board: random_restart_hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
+        "simulated_annealing": lambda board: simulated_annealing(board, maximum_states, maximum_iterations=maximum_states)
     }
 
     results = {algorithm_name: [] for algorithm_name in algorithms.keys()}
@@ -115,10 +115,10 @@ def test_and_save():
             board = ChessBoardState(queen_count)
 
             for algorithm_name in algorithms:
-
-                    algo_func = algorithms[algorithm_name]
-                    result: LocalSearchResult = algo_func(board)
-                    results[algorithm_name].append(result)
+                print(f"Executing {algorithm_name} in board of size {queen_count}")
+                algo_func = algorithms[algorithm_name]
+                result: LocalSearchResult = algo_func(board)
+                results[algorithm_name].append(result)
 
     _save_results(results, queen_counts)
 
