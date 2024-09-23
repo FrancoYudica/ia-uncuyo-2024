@@ -1,9 +1,9 @@
 from chess_board_state import ChessBoardState
 from local_search_algo.local_search_result import LocalSearchResult
-
 from local_search_algo.hill_climb.random_restart_hill_climb import hill_climb
 from local_search_algo.hill_climb.random_restart_hill_climb import random_restart_hill_climb
 from local_search_algo.simulated_annealing.simulated_annealing import simulated_annealing
+from local_search_algo.genetic.genetic import genetic
 from plotting import save_csv, save_plot_execution_times, save_plot_states_count, plot_h_values
 
 def hill_climb_test(board):
@@ -43,6 +43,20 @@ def hill_climb_success_rate_test(
 def simulated_annealing_test(board):
     print("RUNNING: SIMULATED ANNEALING")
     result: LocalSearchResult = simulated_annealing(board, maximum_states=600)
+
+    print(f"Traversed {result.traversed_states} states in {result.time_taken} seconds")
+
+    if result.board.cached_threats == 0:
+        print("Success")
+        print(result.board)
+
+    else:
+        print(f"Failure. Stuck at {result.board.cached_threats} threats")
+
+
+def genetic_test(board):
+    print("RUNNING: GENETIC")
+    result: LocalSearchResult = genetic(board, maximum_states=10)
 
     print(f"Traversed {result.traversed_states} states in {result.time_taken} seconds")
 
@@ -100,11 +114,12 @@ def _save_results(results, queen_counts):
 def test_and_save():
 
     queen_counts = [4, 8, 10, 12, 15]
-    maximum_states = 1000
+    maximum_states = 200
     algorithms = {
-        "hill_climb": lambda board: hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
+        # "hill_climb": lambda board: hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
         # "random_restart_hill_climb": lambda board: random_restart_hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
-        "simulated_annealing": lambda board: simulated_annealing(board, maximum_states, maximum_iterations=maximum_states)
+        # "simulated_annealing": lambda board: simulated_annealing(board, maximum_states, maximum_iterations=maximum_states),
+        "genetic": lambda board: genetic(board, maximum_states)
     }
 
     results = {algorithm_name: [] for algorithm_name in algorithms.keys()}
@@ -123,9 +138,8 @@ def test_and_save():
     _save_results(results, queen_counts)
 
 if __name__ == "__main__":
-    test_and_save()
-
-    # board = ChessBoardState(8)
-    # simulated_annealing_test(board)
+    # test_and_save()
+    board = ChessBoardState(4)
+    genetic_test(board)
 
 

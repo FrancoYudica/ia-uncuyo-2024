@@ -5,7 +5,8 @@ class ChessBoardState:
             self, 
             size,
             seed=None,
-            columns=None) -> None:
+            columns=None,
+            calculate_threats=True) -> None:
         
         if columns is None:
             random.seed(seed)
@@ -18,7 +19,8 @@ class ChessBoardState:
         # is an expensive operation
         self.cached_threats = 0
         
-        self.recalculate_threats()
+        if calculate_threats:
+            self.recalculate_threats()
             
     @property
     def size(self):
