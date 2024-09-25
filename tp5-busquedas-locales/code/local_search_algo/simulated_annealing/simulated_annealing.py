@@ -29,20 +29,14 @@ def simulated_annealing(
 
         delta_e = successor_board.cached_threats - current_board.cached_threats
         next_board = None
-        # T = 1.0 / (t * 0.2)#schedule(t, 0.5)
-        # T = pow(10, 1.4) / t#schedule(t, 0.5)
-        # T = 23 / t
         T = T * 0.95
-        # T = schedule(t, 0.5)
         
         # When successor gets closer to local minimum or same (shoulders)
         if delta_e <= 0.0:
             next_board = successor_board
         else:
             probability = math.exp(-delta_e / T)
-            print(probability)
             r = random.random()
-            # print(f"T: {T}, probability: {probability}")
             if r < probability:
                 next_board = successor_board
             else:

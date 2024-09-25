@@ -56,7 +56,7 @@ def simulated_annealing_test(board):
 
 def genetic_test(board):
     print("RUNNING: GENETIC")
-    result: LocalSearchResult = genetic(board, maximum_states=10)
+    result: LocalSearchResult = genetic(board)
 
     print(f"Traversed {result.traversed_states} states in {result.time_taken} seconds")
 
@@ -114,11 +114,11 @@ def _save_results(results, queen_counts):
 def test_and_save():
 
     queen_counts = [4, 8, 10, 12, 15]
-    maximum_states = 200
+    maximum_states = 800
     algorithms = {
-        # "hill_climb": lambda board: hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
+        "hill_climb": lambda board: hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
         # "random_restart_hill_climb": lambda board: random_restart_hill_climb(board, maximum_states, maximum_shoulder_iterations=10),
-        # "simulated_annealing": lambda board: simulated_annealing(board, maximum_states, maximum_iterations=maximum_states),
+        "simulated_annealing": lambda board: simulated_annealing(board, maximum_states, maximum_iterations=maximum_states),
         "genetic": lambda board: genetic(board, maximum_states)
     }
 
@@ -138,8 +138,8 @@ def test_and_save():
     _save_results(results, queen_counts)
 
 if __name__ == "__main__":
-    # test_and_save()
-    board = ChessBoardState(4)
-    genetic_test(board)
+    test_and_save()
+    # board = ChessBoardState(8)
+    # genetic_test(board)
 
 
