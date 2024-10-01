@@ -1,5 +1,23 @@
-def get_neighbors(row, column):
-    """Returns the neighbors. Row, column and block"""
+def print_sudoku_board(board):
+    for i in range(9):
+        if i % 3 == 0 and i != 0:
+            print("-" * 21)  # Line to separate boxes
+
+        for j in range(9):
+            if j % 3 == 0 and j != 0:
+                print("|", end=" ")  # Separator between 3x3 boxes
+
+            if j == 8:
+                print(board[i][j] if board[i][j] != 0 else "?")  # End of row, print and move to next line
+            else:
+                print(board[i][j] if board[i][j] != 0 else "?", end=" ")
+
+
+def get_neighbors(row, column) -> list:
+    """
+    Returns the neighbors. Row, column and block.
+    Always returns 3*(N-1) neighbors
+    """
     neighbors = set()
 
     # Adds the same row and column neighbors
@@ -24,14 +42,21 @@ def revise(
         domains, 
         xi: tuple, 
         xj: tuple) -> bool:
+    """
+    Revises the domain of Xi by removing the value 
+    of Xj if the Xj value is already set
+    """
 
     xi_domain = domains[xi[0]][xi[1]]
     xj_domain = domains[xj[0]][xj[1]]
 
-    # xj_domain should have one element, since it's already explored
+    # xj_domain should have one element
+    # Revision works when xj has set it's final value, 
+    # therefore the length of the domain should be 1
     if len(xj_domain) != 1:
         return False
 
+    # Removes xj variable value from the domain if xi
     xj_value = xj_domain[0]
 
     if xj_value in xi_domain:
@@ -39,21 +64,6 @@ def revise(
         return True
     
     return False
-
-
-def print_sudoku_board(board):
-    for i in range(9):
-        if i % 3 == 0 and i != 0:
-            print("-" * 21)  # Line to separate boxes
-
-        for j in range(9):
-            if j % 3 == 0 and j != 0:
-                print("|", end=" ")  # Separator between 3x3 boxes
-
-            if j == 8:
-                print(board[i][j] if board[i][j] != 0 else "?")  # End of row, print and move to next line
-            else:
-                print(board[i][j] if board[i][j] != 0 else "?", end=" ")
 
 
 def generate_initial_domains(board) -> list:
@@ -69,9 +79,10 @@ def generate_initial_domains(board) -> list:
     return domains
 
 
-def ac3_sudoku(domains):
+def ac3_sudoku(domains) -> bool:
 
-    # Initializes queue with all the neighbors of all the cells
+    # Initializes queue with all the neighbors of all the cells. This will
+    # create an array of N*N*(3*(N-1)) = 9*9*(3*(9-1)) = 1944
     queue = []
     for row in range(0, 9):
         for column in range(0, 9):
@@ -81,6 +92,7 @@ def ac3_sudoku(domains):
     while queue:
         xi, xj = queue.pop(0)
 
+        # If the domain of Xj is reduced
         if revise(domains, xi, xj):
 
             # If the domain is empty, there isn't solution
