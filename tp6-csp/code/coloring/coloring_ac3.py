@@ -1,3 +1,4 @@
+## AC3 CODE ---------------------------------------------------------------------------------------
 def get_neighbors(territories, territory_name) -> list:
     return territories[territory_name]
 
@@ -30,7 +31,7 @@ def revise(
     return False
 
 
-def ac3_painting(territories, domains) -> bool:
+def ac3_coloring(territories, domains) -> bool:
 
     # Initializes queue with all the neighbors of all the cells. This will
     # create an array of N*N*(3*(N-1)) = 9*9*(3*(9-1)) = 1944
@@ -58,18 +59,19 @@ def ac3_painting(territories, domains) -> bool:
     return True
 
 
-def test_wa_red_v_blue():
+# Defines map as a graph with a dictionary
+territories = {
+    "WA": ["NT", "SA"],
+    "NT": ["WA", "SA", "Q"],
+    "SA": ["WA", "NT", "Q", "NSW", "V"],
+    "Q": ["NT", "SA", "NSW"],
+    "NSW": ["Q", "SA", "V"],
+    "V": ["SA", "NSW"],
+    "T": []
+}
 
-    # Defines map as a graph with a dictionary
-    territories = {
-        "WA": ["NT", "SA"],
-        "NT": ["WA", "SA", "Q"],
-        "SA": ["WA", "NT", "Q", "NSW", "V"],
-        "Q": ["NT", "SA", "NSW"],
-        "NSW": ["Q", "SA", "V"],
-        "V": ["SA", "NSW"],
-        "T": []
-    }
+
+def test_wa_red_v_blue():
 
     domains = {territory_name: [i for i in range(3)] for territory_name in territories.keys()}
     domains["WA"] = [0]
@@ -77,7 +79,7 @@ def test_wa_red_v_blue():
 
     print(domains)
 
-    if ac3_painting(territories, domains):
+    if ac3_coloring(territories, domains):
         print("Solution possible!")
         print(domains)
     else:
