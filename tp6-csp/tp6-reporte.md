@@ -13,3 +13,24 @@ Es posible resolverlo mediante este algoritmo, debido a que sudoku es un problem
 El problema será resuelto cuando el dominio de cada una de las variables sea exáctamente 1.
 
 En `ac3` existe el concepto de vecinos, que son nodos sobre los cuales se aplican las restricciones. En el caso de sudoku, las restricciones de un nodo se aplican sobre los otros nodos de la misma fila, misma columna y mismo bloque.
+
+*Nota*: Por curiosidad implementé el algoritmo, y se encuentra en el archivo 
+[`sudoku.py`](code/sudoku.py)
+## Ejercicio 2 - Coloreo de territorios
+
+Tras implementar el algoritmo de [`coloreo de territorios`](code/sudoku.py), he comprobado que `ac3` detecta las arco inconsistencias para las asignaciones parciales de `WA = rojo` y `V = azul`
+
+Tras ejecutar el prorama se obtiene la siguiente salida:
+ ```
+No solution possible...
+Domains: {'WA': [0], 'NT': [2], 'SA': [1], 'Q': [], 'NSW': [0], 'V': [2], 'T': [0, 1, 2]}
+```
+Se puede ver que el algoritmo redujo el dominio de `Q` a un conjunto vacío, lo cuál significa que no existe una asignación completa legal, dada la asignación parcial inicial de variables y las restricciones de arco entre los países.
+Nótese que `[0, 1, 2]` se mapea a `[rojo, verde, azul]`
+
+Si `WA = rojo`, entonces, en todas las asignaciones solución del problema, `V = rojo` necesariamente.
+```
+Solution possible!
+Domains: {'WA': [0], 'NT': [1, 2], 'SA': [1, 2], 'Q': [0, 1, 2], 'NSW': [1, 2], 'V': [0], 'T': [0, 1, 2]}
+```
+En este caso, tras asegurar la arco consistencia, se observa que el algoritmo redujo el dominio de los territorios `[NT, SA, NSW]`, lo cuál no significa que necesariamente exista una asignación completa legal (aunque si exista), motivo por el cuál se debería evaluar el resultado con un algoritmo de backtracking sobre los dominios reducidos.
