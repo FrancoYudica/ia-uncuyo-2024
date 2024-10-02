@@ -55,3 +55,39 @@ def count_board_threats(board) -> int:
                     threats_count += 1
 
     return threats_count
+
+
+def has_any_threats(board) -> bool:
+    """
+    Returns True if any pair of queens is threatening each other.
+    board = [1, 2, 5, 6, 1, 4, 7, 0]
+    """
+
+    n = len(board)
+    for column in range(n):
+        row = board[column]
+
+        if row == -1:
+            continue
+
+        # Tests with the remaining rows
+        for child_column in range(column + 1, n):
+
+            child_row = board[child_column]
+
+            if child_row == -1:
+                continue
+
+            # Same row
+            if row == child_row:
+                return True
+
+            else:
+                direction = column - child_column, row - child_row
+                slope = direction[0] / direction[1]
+
+                # In diagonal
+                if abs(slope) == 1.0:
+                    return True
+
+    return False
