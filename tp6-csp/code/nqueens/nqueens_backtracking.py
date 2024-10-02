@@ -1,17 +1,22 @@
 from nqueens_utils import *
+import time
 
 
-def backtracking_search(board) -> dict:
+def nqueens_backtracking(initial_board) -> NQueensSearchResult:
     """
     Implementation of backtracking algorithm for CSP. It's the most basic backtracking
     """
     
-    if _backtrack(board):
-        return board
+    result = NQueensSearchResult()
+    result.board = initial_board.copy()
+    result.time_taken = time.time()
 
-    return []
+    _backtrack(result.board, result)
 
-def _backtrack(board: list) -> bool:
+    result.time_taken = time.time() - result.time_taken
+    return result
+
+def _backtrack(board: list, result: NQueensSearchResult) -> bool:
 
     ## Helper functions ----------------------------------------------------
     def select_unassigned_var() -> int:
@@ -28,7 +33,7 @@ def _backtrack(board: list) -> bool:
 
     def is_consistent_assignment() -> bool:
         # Is consistent if the amount of threats doesn't increase
-        return count_board_threats(board) == 0
+        return not has_any_threats(board)
     
     ## Actual code -----------------------------------------------------------
     var = select_unassigned_var()
@@ -40,6 +45,8 @@ def _backtrack(board: list) -> bool:
     # Iterates through all the possible values
     for value in order_domain_values():
 
+        result.traversed_states += 1
+
         board[var] = value
 
         # Skips assignments that break the restrictions
@@ -47,7 +54,7 @@ def _backtrack(board: list) -> bool:
             continue
         
         # Tries to find a solution with the assignment
-        if _backtrack(board):
+        if _backtrack(board, result):
             return True
 
     # All assignments failed, sets variable to default state for backtracking        
@@ -57,8 +64,11 @@ def _backtrack(board: list) -> bool:
 
 if __name__ == "__main__":
     board = create_empty_board(16)
+
+    # Available domains for all the variables
     print_board(board)
 
-    backtracking_search(board)
-    print_board(board)
-    print(board)
+    result = nqueens_backtracking(board)
+    print_board(result.board)
+    print(result.traversed_states)
+    print(result.time_taken)

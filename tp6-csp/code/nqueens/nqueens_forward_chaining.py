@@ -1,20 +1,28 @@
 from nqueens_utils import *
+import time
 
-
-def backtracking_search(board, domains) -> dict:
+def nqueens_forward_chaining(initial_board, domains) -> NQueensSearchResult:
     """
     Implementation of backtracking algorithm for CSP. It uses forward chaining
     to reduce the exploration domain. In order to implement forward chaining, the
     memory usage is increased, in comparison with a simple backtracking implementation,
     since multiple copies if the `sub domains` are kept in the stack frames
+
+    returns the amount of explored states
     """
-    
-    if _backtrack(board, domains):
-        return board
+    result = NQueensSearchResult()
+    result.board = initial_board.copy()
+    result.time_taken = time.time()
 
-    return []
+    _fc_backtrack(result.board, domains, result)
 
-def _backtrack(board: list, domains: list) -> bool:
+    result.time_taken = time.time() - result.time_taken
+    return result
+
+def _fc_backtrack(
+        board: list, 
+        domains: list, 
+        result: NQueensSearchResult) -> bool:
 
     ## Helper functions ----------------------------------------------------
     def select_unassigned_var() -> int:
@@ -64,8 +72,9 @@ def _backtrack(board: list, domains: list) -> bool:
                     sub_domains[column_index].remove(domain_value)
 
         return sub_domains
-
+  
     ## Actual code -----------------------------------------------------------
+
     var = select_unassigned_var()
 
     # When all variables got assigned
@@ -75,6 +84,8 @@ def _backtrack(board: list, domains: list) -> bool:
     # Iterates through all the possible values
     for value in order_domain_values(var):
         
+        result.traversed_states += 1
+        
         # No need to check if the assignment if consistent, 
         # since it's done by previous inferences
         board[var] = value
@@ -82,7 +93,7 @@ def _backtrack(board: list, domains: list) -> bool:
         sub_domains = inference(var, value)
 
         # Tries to find a solution with the assignment
-        if _backtrack(board, sub_domains):
+        if _fc_backtrack(board, sub_domains, result):
             return True
 
     # All assignments failed, sets variable to default state for backtracking        
@@ -91,12 +102,13 @@ def _backtrack(board: list, domains: list) -> bool:
     
 
 if __name__ == "__main__":
-    board = create_empty_board(10)
+    board = create_empty_board(16)
 
     # Available domains for all the variables
     domains = [[i for i in range(len(board))] for _ in range(len(board))]
     print_board(board)
 
-    backtracking_search(board, domains)
-    print_board(board)
-    print(board)
+    result = nqueens_forward_chaining(board, domains)
+    print_board(result.board)
+    print(result.traversed_states)
+    print(result.time_taken)

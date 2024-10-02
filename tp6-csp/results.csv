@@ -1,0 +1,13 @@
+algorithm_name,queen_count,traversed_state_count,time_taken
+4,basic_backtracking,26,3.4332275390625e-05
+8,basic_backtracking,876,0.0016376972198486328
+10,basic_backtracking,975,0.002308368682861328
+12,basic_backtracking,3066,0.011328935623168945
+15,basic_backtracking,20280,0.10103797912597656
+17,basic_backtracking,91222,0.5606245994567871
+4,forward_chaining,8,2.288818359375e-05
+8,forward_chaining,113,0.0002942085266113281
+10,forward_chaining,102,0.00026917457580566406
+12,forward_chaining,261,0.0007901191711425781
+15,forward_chaining,1359,0.004136562347412109
+17,forward_chaining,5374,0.018816709518432617
