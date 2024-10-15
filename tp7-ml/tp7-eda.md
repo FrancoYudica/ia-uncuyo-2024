@@ -41,3 +41,16 @@ La variable _circ_tronco_cm_, es categorizada de la siguiente manera:
 - Muy alto [225cm, infinito]
 
   ![](images/a/3/distribucion_circ_tronco_cm_cat.png)
+
+## Punto 4 - Clasificador aleatorio
+
+Tras flasificar aleatoriamente a los árboles según su peligrosidad, se obtuvieron los siguientes resultados:
+
+| Métrica                  | Valor  |
+| ------------------------ | ------ |
+| True Positives (TP)      | 363    |
+| True Negatives (TN)      | 2829   |
+| False Positives (FP)     | 2835   |
+| False Negatives (FN)     | 355    |
+| **n**                    | 6382   |
+| **Precisión (Accuracy)** | 0.5375 |
