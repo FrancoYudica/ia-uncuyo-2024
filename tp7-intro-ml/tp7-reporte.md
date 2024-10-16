@@ -24,21 +24,21 @@ Regresión (El salario del CEO es una variable continua)
 Estamos interesados en realizar inferencia. Buscamos entender las relaciones entre los predictores y el salario del CEO.
 
 - **n**: 500 (firmas)
-- **p**: 4 (profit, número de empleados, industria, salario CEO)
+- **p**: 3 (profit, número de empleados, industria, el salario del CEO no porque es lo que queremos predecir)
 
 ### (b) We are considering launching a new product and wish to know whether it will be a success or a failure. We collect data on 20 similar products that were previously launched. For each product we have recorded whether it was a success or failure, price charged for the product, marketing budget, competition price, and ten other variables.
 
 Clasificación (Exito/Fracaso es una variable categórica)
 Predicción: Se busca predecir si el producto nuevo va a tener éxito en función de los históricos sobre productos anteriores.
 **n**: 20 (productos)
-**p**: 14
+**p**: 13
 
 ### (c) We are interested in predicting the % change in the USD/Euro exchange rate in relation to the weekly changes in the world stock markets. Hence we collect weekly data for all of 2012. For each week we record the % change in the USD/Euro, the % change in the US market, the % change in the British market, and the % change in the German market.
 
 Regresión (porcentaje de cambio en el cambio USD/Euro es continuo)
 Predicción
 **n**: 52 (cantidad de semanas de 2012)
-**p**: 4
+**p**: 3
 
 ## 5. What are the advantages and disadvantages of a very flexible (versus a less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred?
 
@@ -79,7 +79,7 @@ Asume una forma específica para el modelo (por ejemplo, regresión lineal o log
 
 No hace suposiciones fuertes sobre la forma del modelo. El número de parámetros crece con el tamaño de los datos.
 
-### Ventajas y desventajas de lost modelos paramétricos
+### Ventajas y desventajas de los modelos paramétricos
 
 | **Aspecto**                 | **Ventajas**                                                   | **Desventajas**                                                               |
 | --------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
