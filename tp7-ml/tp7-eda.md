@@ -41,13 +41,3 @@ La variable _circ_tronco_cm_, es categorizada de la siguiente manera:
 - Muy alto [225cm, infinito]
 
   ![](images/a/3/distribucion_circ_tronco_cm_cat.png)
-
-## Punto 4 - Clasificador aleatorio
-
-Tras clasificar aleatoriamente la peligrosidad de los árboles, se obtuvieron los siguientes resultados:
-
-|                   | Predecido positivo                | Predecido negativo                |                       |
-| ----------------- | --------------------------------- | --------------------------------- | --------------------- |
-| **Real positivo** | 363                               | 2829                              | Sensitividad: 0.1137  |
-| **Real Negativo** | 2835                              | 355                               | Especificidad: 0.1113 |
-|                   | Valor positivo predictivo: 0.1135 | Valor negativo predictivo: 0.1115 | Precisión: 0.5375     |
