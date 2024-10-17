@@ -1,74 +1,68 @@
 # Cargar librerías necesarias
 library(rpart)
-library(dplyr) # Para manipulación de datos
-library(caret) # Para las métricas y cálculos de rendimiento
+library(dplyr)
+library(caret)
 
 
 create_folds <- function(dataset, k) {
-    # Obtener los índices del dataframe
+    # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     indices <- seq_len(nrow(dataset))
 
-    # Mezclar los índices para asegurar una distribución aleatoria
+    # Shuffles indices with random distribution
+    # [4, 1, 9, 2, 7, 3, 10, 5, 8, 6]
     set.seed(123)
     shuffled_indices <- sample(indices)
 
-    # Dividir los índices en k folds de tamaño aproximadamente igual
+    # Splits the indices in k equally sized folds
+    # [[4, 1, 9, 2, 7], [3, 10, 5, 8, 6]]
     folds <- split(shuffled_indices, cut(seq_along(shuffled_indices), breaks = k, labels = FALSE))
 
-    # Crear una lista con nombres apropiados para cada fold
-    fold_list <- lapply(seq_len(k), function(i) folds[[i]])
-    # names(fold_list) <- paste0("Fold", seq_len(k))
-
-    return(fold_list)
+    return(folds)
 }
 
 
-# Función de validación cruzada
 cross_validation <- function(dataset, k) {
-    # Elimina el atributo de ultima_modificacion
-    dataset <- dataset %>% select(-ultima_modificacion)
-
-    # Filter out rows where the 'especie' has levels that are not in the training data
-    dataset <- dataset %>%
-        filter(especie %in% levels(dataset$especie))
-
-
-    # Crear los folds
     folds <- create_folds(dataset, k)
 
-    # Inicializar vectores para almacenar las métricas de cada fold
+    # Sets where confusion matrix results are stores for each fold
     accuracies <- c()
     precisions <- c()
     sensitivities <- c()
     specificities <- c()
 
-    # Loop sobre cada fold
     for (i in seq_len(k)) {
-        # Obtener los índices de entrenamiento y test para el fold actual
+        # [[Test], [Train], [Train], ..., [Train]]
+        # The current fold is the test
         test_indices <- folds[[i]]
+
+        # The remaining folds are for training
         train_indices <- setdiff(seq_len(nrow(dataset)), test_indices)
 
-        # Dividir el dataset en conjunto de entrenamiento y test
-        train_data <- dataset[train_indices, ]
+        # Given test and train indices, access test and train data
         test_data <- dataset[test_indices, ]
+        train_data <- dataset[train_indices, ]
 
-        # Entrenar el modelo de árbol de decisión en los datos de entrenamiento
-        model <- rpart(inclinacion_peligrosa ~ ., data = train_data, method = "class")
+        # Trains the decision tree model with train data
+        # The first argument specifies that the predicted variable
+        # is `inclinacion_peligrosa`, and the remaining are the predictors
+        model <- rpart(
+            inclinacion_peligrosa ~ .,
+            data = train_data,
+            method = "class"
+        )
 
-        # Hacer predicciones en los datos de test
+        # Tests the obtained model with test data
         predictions <- predict(model, test_data, type = "class")
 
-        # Calcular la matriz de confusión
+        # Calculates confusion matrix and extracts the metrics
         confusion_matrix <- confusionMatrix(as.factor(predictions), as.factor(test_data$inclinacion_peligrosa))
-
-        # Extraer las métricas
         accuracies <- c(accuracies, confusion_matrix$overall["Accuracy"])
         precisions <- c(precisions, confusion_matrix$byClass["Precision"])
         sensitivities <- c(sensitivities, confusion_matrix$byClass["Sensitivity"])
         specificities <- c(specificities, confusion_matrix$byClass["Specificity"])
     }
 
-    # Calcular la media y desviación estándar de cada métrica
+    # Calculates the mean and standard deviation for each metric
     metrics_summary <- list(
         accuracy_mean = mean(accuracies),
         accuracy_sd = sd(accuracies),
@@ -83,11 +77,43 @@ cross_validation <- function(dataset, k) {
     return(metrics_summary)
 }
 
+# 1. Loads dataset ---------------------------------------------------------
 dataset <- read.csv("../../../data/arbolado-mendoza-dataset-train.csv")
 
+print("Dataset columns")
+names(dataset)
 
-# Ejemplo de uso con un dataframe llamado 'dataset'
-metrics_summary <- cross_validation(dataset, 4)
+# 2. Cleans dataset --------------------------------------------------------
+# 2.1 Removes irrelevant columns
+clean_dataset <- dataset %>% select(-id, -ultima_modificacion, -seccion)
 
-# Mostrar los resultados
+
+# 2.2 Filter the dataset by keeping only the categories that have more than
+# the threshold occurrences
+threshold <- 10
+clean_dataset <- clean_dataset %>%
+    group_by(especie) %>% # Group by the categorical column
+    filter(n() >= threshold) %>% # Keep groups with more than 'threshold'
+    ungroup()
+
+# 2.3 Undersamples the majority class to ensure a balanced distribution
+# Separate the dataset into two groups based on the value of
+# 'inclinacion_peligrosa'
+majority_class <- clean_dataset %>% filter(inclinacion_peligrosa == 0)
+minority_class <- clean_dataset %>% filter(inclinacion_peligrosa == 1)
+
+# Sample from the majority class to match the number of rows in the
+# minority class
+set.seed(123)
+majority_class_sample <- majority_class %>% sample_n(nrow(minority_class))
+
+# Combine the undersampled majority class and the full minority class
+clean_dataset <- bind_rows(majority_class_sample, minority_class)
+
+print("Showing summary -----------------------------------------------")
+names(clean_dataset)
+summary(clean_dataset)
+
+
+metrics_summary <- cross_validation(clean_dataset, 10)
 metrics_summary
