@@ -3,7 +3,7 @@ library(ggplot2)
 library(dplyr)
 
 # Leer el archivo CSV
-dataset <- read.csv("../../../data/arbolado-mendoza-dataset-validation.csv")
+dataset <- read.csv("../../../data/arbolado-mendoza-dataset-train.csv")
 
 add_random_prediction_prob <- function(dataset) {
     # Añade una nueva columna 'prediction_prob' con valores aleatorios entre 0 y 1
