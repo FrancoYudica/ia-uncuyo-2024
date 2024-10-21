@@ -170,11 +170,47 @@ Como ya detalle previamente, el algoritmo genético se encarga de buscar un indi
 # Justificación
 
 El problema a resolver, es de búsqueda local, no se busca la mejor solución porque esa mejor solución es la imagen objetivo, la cuál se ingresa como parámetro al algoritmo. Se busca un máximo (de similutud) local.
-Considero un algoritmo genético rendirá mejor en este problema que hill climbing y simmulated annealing porque mantiene diversidad, evitando caer en óptimos locales, además gracias al crossover y la mutación será posible ampliar más el espacio de soluciones y potencialmente descubriendo mejores soluciones. Hill climbing es greedy y puede atascarse, y SA explora lentamente con una solución, los GA equilibran la exploración y la explotación de manera efectiva, haciéndolos más robustos para tareas complejas como la generación de imágenes.
+Considero que un algoritmo genético rendirá mejor en este problema que hill climbing y simmulated annealing porque mantiene diversidad, evitando caer en óptimos locales, además gracias al crossover y la mutación será posible ampliar más el espacio de soluciones y potencialmente descubriendo mejores soluciones. Hill climbing es greedy y puede atascarse, y SA explora lentamente con una solución, los GA equilibran la exploración y la explotación de manera efectiva, haciéndolos más robustos para tareas complejas como la generación de imágenes.
 
 Tras realizar investigaciones, un algoritmo de deep learning podría rendir mejor que un genético en este caso, pero no cuento con los conocimientos necesarios sobre el algoritmo, y el proyecto ya resulta ser desafiante con algoritmos genéticos.
 
 Personalmente me resulta un proyecto muy interesante y desafiante en varios aspectos, lo que me da la motivación para poder encarar el problema.
+
+# Listado de actividades
+
+1. _Código fuente base para poder desarrollar el algoritmo en C++ usando OpenGL_ [5 días]
+2. _Implementación del renderizador de imágenes_ [2 días]
+3. _Implementación de la función de Fitness_ [3 días]
+4. _Implementación de individuos y la obtención de colores por sub-regiones_ [1 día]
+5. _Puesta a punto del código fuente de base para el algoritmo genético_ [3 días]
+6. _Integración del algoritmo genético con el proceso secuencial de generación de imagen_ [2 día]
+7. _Análisis de los resultados_ [2 día]
+8. _Optimizaciones y mejoras del algoritmo_ [4 días]
+9. _Recopilación de estadísticas finales_ [1 día]
+10. _Escritura del informe_ [9 días]
+
+Las actividades no son secuenciales, es decir que hay superposición de actividades.
+
+# Cronograma estimado de actividades
+
+```mermaid
+gantt
+    title Plan de Desarrollo de GAFSIR
+    dateFormat  18-11-2024
+    section Desarrollo
+    Código fuente base para el algoritmo   :a1, 18-11-2024, 5d
+    Implementación del renderizador de imágenes :a2, after a1, 2d
+    Implementación de la función de Fitness :a3, after a1, 3d
+    Implementación de individuos y colores por sub-regiones :a4, after a3, 1d
+    Puesta a punto del código para algoritmo genético :a5, after a4, 3d
+    Integración del algoritmo genético :a6, after a5, 2d
+    Análisis de los resultados :a7, after a6, 2d
+    Optimizaciones y mejoras del algoritmo :a8, after a7, 4d
+    Recopilación de estadísticas finales :a9, after a8, 1d
+    Escritura del informe :a10, after a7, 9d
+```
+
+El cronograma de actividades estimado, comienza el día 18-11-2024, y termina el 16-12-2024, con un total de 29 días. El objetivo sería asistir al sexto llamado de mesas.
 
 # Referencias
 
