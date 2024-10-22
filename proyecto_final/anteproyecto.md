@@ -8,7 +8,7 @@ Franco Yudica
 
 [![](images/sample/sample-lod-3.png)](https://www.youtube.com/watch?v=6aXx6RA1IK4)
 
-El objetivo de este proyecto es desarrollar un método para generar imágenes _transformadas estéticamente_ utilizando técnicas de computación evolutivas. Al aplicar un algoritmo genético para replicar imágenes objetivo a través de modificaciones iterativas, se busca no solo aproximar la imagen original, sino también explorar interpretaciones visuales únicas. Este enfoque tiene como finalidad crear representaciones artísticas nuevas, evolucionando estructuras y patrones no convencionales, lo que da lugar a una estética distinta a los métodos tradicionales de replicación de imágenes, tales como los foto mosaicos, pointillism, pixelart, entre otros.
+El objetivo de este proyecto es desarrollar un método para generar imágenes _transformadas estéticamente_ utilizando técnicas de computación evolutivas. Al aplicar un algoritmo genético para replicar imágenes objetivo a través de modificaciones iterativas, se busca no solo aproximar la imagen original, sino también explorar interpretaciones visuales únicas, diferentes a otras tales como las foto mosaicos, pointillism, pixelart, entre otros.
 
 # Objetivos
 
@@ -18,7 +18,8 @@ El algoritmo debe ser capaz de replicar una imagen objetivo, tanto en las formas
 
 En cuanto al alcance del proyecto, se limitará a la generación de una imagen. Es decir que dada una imagen fuente, se obtendrá una imagen estilizada.
 
-Si los tiempos lo permiten, sería interesante abordar la replicación de videos, lo cuál no debería resultar complejo, teniendo en cuenta que un video es una secuencia de imágenes, lo que permitiría reutilizar los algoritmos previamente desarrollados.
+Si los tiempos lo permiten, sería interesante implementar la replicación de videos. Esto supondría modificaciones en el código del algoritmo genético previamente desarrollado para la generación de imágenes.
+Teniendo en cuenta que los fotogramas consecutivos suelen ser similares, es posible optimizar el algoritmo de generación de videos, utilizando los individuos de la imagen anterior.
 
 # Limitaciones
 
@@ -174,7 +175,7 @@ Considero que un algoritmo genético rendirá mejor en este problema que hill cl
 
 Tras realizar investigaciones, un algoritmo de deep learning podría rendir mejor que un genético en este caso, pero no cuento con los conocimientos necesarios sobre el algoritmo, y el proyecto ya resulta ser desafiante con algoritmos genéticos.
 
-Personalmente me resulta un proyecto muy interesante y desafiante en varios aspectos, lo que me da la motivación para poder encarar el problema.
+Personalmente me resulta un proyecto muy interesante y desafiante en varios aspectos, lo que me da la motivación para poder encarar el problema. Además, me encantaría implementar la generación de videos, ya sea como el proyecto final de la materia o como proyecto personal.
 
 # Listado de actividades
 
