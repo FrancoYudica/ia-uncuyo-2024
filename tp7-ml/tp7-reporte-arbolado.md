@@ -33,6 +33,7 @@ De los resultados se puede observar que:
 ## Resultados obtenidos en Kaggle
 
 ![](images/b/submission_results_public_leaderboard.png)
+
 Coun un `AUC = 0.76793` en la tabla pública.
 Se puede observar que el _AUC_ obtenido es similar al calculado previamente sobre el conjunto de datos de validación, `Validation AUC = 0.7573`
 
