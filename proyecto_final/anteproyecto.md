@@ -10,13 +10,17 @@ Franco Yudica
 
 El objetivo de este proyecto es desarrollar un método para generar imágenes _transformadas estéticamente_ utilizando técnicas de computación evolutivas. Al aplicar un algoritmo genético para replicar imágenes objetivo a través de modificaciones iterativas, se busca no solo aproximar la imagen original, sino también explorar interpretaciones visuales únicas, diferentes a otras tales como las foto mosaicos, pointillism, pixelart, entre otros.
 
+Además, se implementará un algoritmo aleatorio como _baseline_.
+
 # Objetivos
 
-El algoritmo debe ser capaz de replicar una imagen objetivo, tanto en las formas como en los colores, de tal modo de que sea interpretable y lo único que cambie sea la estética.
+Dada una _imagen objetivo_, el algoritmo debe ser capaz de generar una imagen, con características similares, tanto en las formas como en los colores y lo único que cambie sea la estética.
+
+En este proyecto se implementarán dos enfoques para la generación de imágenes: uno basado en un _algoritmo aleatorio_ y otro utilizando un _algoritmo genético_. Para evaluar la calidad de las imágenes generadas, será esencial definir una métrica que mida la diferencia entre la imagen final generada por cada algoritmo y la imagen objetivo. A partir de los resultados, se determinará si el uso de algoritmos genéticos aporta ventajas significativas en el proceso de generación de imágenes.
 
 # Alcance
 
-En cuanto al alcance del proyecto, se limitará a la generación de una imagen. Es decir que dada una imagen fuente, se obtendrá una imagen estilizada.
+En cuanto al alcance del proyecto, se limitará a la generación de una imagen. Es decir que el algoritmo toma como parámetro una imagen objetivo cualquiera, y generará una imagen estilizada.
 
 Si los tiempos lo permiten, sería interesante implementar la replicación de videos. Esto supondría modificaciones en el código del algoritmo genético previamente desarrollado para la generación de imágenes.
 Teniendo en cuenta que los fotogramas consecutivos suelen ser similares, es posible optimizar el algoritmo de generación de videos, utilizando los individuos de la imagen anterior.
@@ -29,35 +33,72 @@ Esto implica que en el desarrollo, las iteraciones para desarrollar el programa,
 
 # Métrica
 
-La métrica debe medir la diferencia entre dos imágenes, la objetivo y la "actual". Es de vital importancia que esta diferencia se corresponda a la diferencia percibida por el ojo humano.
+La métrica utilizada para evaluar la similitud entre las imágenes será el algoritmo _Delta E (ΔE)_, aplicado en el espacio de color [CIE L*a*b\*](https://en.wikipedia.org/wiki/CIELAB_color_space). Este espacio es perceptualmente uniforme, lo que significa que las diferencias calculadas en él se corresponden mejor con la percepción humana de las variaciones de color.
+
+El delta E es una medida estándar utilizada para cuantificar la diferencia entre dos colores en este espacio, y en este proyecto será clave para comparar la imagen generada con la imagen objetivo.
+
+De esta forma, se podrá obtener una evaluación más precisa de la calidad de las imágenes generadas, ya que la métrica estará alineada con la percepción visual humana.
+
+Con el objetivo de comparar los resultados de ambos algoritmos utilizando esta métrica, se evaluarán los siguientes escenarios:
+
+- La métrica final obtenida al fijar una cantidad máxima de objetos.
+- La cantidad de objetos necesarios para alcanzar una métrica objetivo específica.
 
 # Algoritmo genético
 
-El algoritmo genético tiene como entrada la imagen objetivo, la imagen actual y el dominio de imágenes que podrán tomar los individuos. Se retornará el individuo que resulte ser la mejor contribución sobre la imagen actual, con respecto a la imagen objetivo.
+Dadas dos imágenes, una llamada **imagen actual** y otra **imagen objetivo**, se busca encontrar el individuo que, al ser superpuesto o renderizado sobre la imagen actual, produzca una imagen que sea lo más similar posible a la imagen objetivo.
+
+Nótese que el algoritmo genético se ejecutará múltiples veces para generar la imagen final. Esto está detallado en la sección de _Generación de la imagen_.
 
 ## Individuo
 
-Un individuo cuenta con los siguientes atributos genéticos:
+Los individuos cuentan con una serie de **atributos genéticos** que brindan suficiente flexibilidad para representar distintas formas y colores:
 
-- Textura: Perteneciente al dominio de imágenes
-- Tinte: La textura puede modularse con un color
-- Posición: Del dominio _[0, N]x[0, M]_
-- Escala
-- Rotación
+- **Textura**: El algoritmo genético toma como entrada un conjunto de texturas que serán utilizadas por los individuos. Cada individuo posee un atributo llamado textura, el cual corresponde a una de las texturas proporcionadas al algoritmo. Las texturas pueden asignarse a múltiples individuos, permitiendo su repetición dentro de la población.
+- **Posición**: Vector bidimensional dominio _[0, N]x[0, M]_, donde _N_ es el ancho y _M_ el alto de la imagen objetivo. Determina la posición donde se renderizará la textura.
+- **Tinte**: Es un color utilizado para _pintar_ la textura. Es vital para que los individuos tomen colores en función de su posición.
+- **Escala**: Utilizado para modificar el tamaño de la textura. Por ejemplo, si una textura es de resolución _32x64px_ y la escala es 2, entonces la textura renderizada tendrá una resolución de _64x128px_. Importante cuando se intentan cubrir regiones de distinto tamaño.
+- **Rotación**: La textura puede ser rotada [0, 2PI], teniendo como pivote el centro de la textura.
+
+En definitiva, un individuo puede interpretarse como una sub-imagen que podrá contribuir en la imagen final.
 
 ## Función de fitness
 
-Se calcula como la media de la diferencia absolta por pixel.
+La función de fitness, recibe como parámetro un indiduo y retorna un valor del intervalo [0.0, 1.0]. Donde el peor fitness posible es 0, y el mejor 1.
+
+```c++
+float fitness(individual) { ... }
+```
+
+Esta función realiza las siguientes tareas:
+
+1. Renderiza el individuo sobre la imagen actual.
+
+2. Renderiza la textura diferencia, con respecto a la imagen que se obtuvo en el paso 1 y la imagen objetivo. En esta textura, las componentes (R, G, B) contarán con las diferencias absolutas.
+3. Lee la textura diferencia y calcula el error cuadrático medio entre la imagen objetivo y la actual.
+4. Invierte el error cuadŕatico medio, obteniendo un valor normalizado [0, 1], correspondiente al fitness.
+
+### Error cuadrático medio
 
 <div align="center">
-  <img src="images/equations/equation_metric.png" alt="Metric" style="display: block; margin: auto;"/>
+  <img src="images/equations/equation_mse.png" alt="Metric" style="display: block; margin: auto;"/>
 </div>
 
-Donde la imagen es de tamaño **NxM**, y cuenta con tres canales **(R, G, B)** y cada uno se encuentra en el intervalo **[0, 255]**. De este modo, **f** será igual a 0 cuando las imágenes sean iguales, y será 255 cuando sean completamente distintas. Finalmente, el valor será normalizado para definir el **fitness** en _[0.0, 1.0]_:
+Donde:
+
+- **N** y **M** son las dimensiones de la imagen.
+- **R1(i,j)**, **G1(i,j)**, **B1(i,j)** son los valores de los canales Rojo, Verde y Azul de la imagen objetivo en el píxel **(i,j)**.
+- **R2(i,j)**, **G2(i,j)**, **B2(i,j)** son los valores correspondientes en la imagen actual.
+- El factor **3** en el denominador corresponde a los 3 canales (RGB) que se están promediando.
+- De este modo, **MSE** será igual a 0 cuando las imágenes sean iguales y 1 cuando sean completamente distintas.
+
+Luego, el fitness se calcula como:
 
 <div align="center">
-  <img src="images/equations/normalized_metric.png" alt="Normalized Metric" style="display: block; margin: auto;"/>
+  <img src="images/equations/equation_fitness.png" alt="Normalized Metric" style="display: block; margin: auto;"/>
 </div>
+
+Esto se debe a que el fitness mide la similutid y no la diferencia.
 
 ### Ejemplo 1: Imágenes distintas
 
@@ -80,18 +121,20 @@ Donde la imagen es de tamaño **NxM**, y cuenta con tres canales **(R, G, B)** y
 
 #### Los píxeles de la diferencia toman los siguientes valores (R, G, B):
 
-- **(0, 0)** = (0, 208, 0)
-- **(0, 1)** = (238, 0, 0)
-- **(1, 0)** = (128, 0, 0)
-- **(1, 1)** = (120, 255, 0)
+| Posición   | Pixel diferencia absoluta |
+| ---------- | ------------------------- |
+| **(0, 0)** | (0.00, 0.81, 0.00)        |
+| **(0, 1)** | (0.93, 0.00, 0.00)        |
+| **(1, 0)** | (0.50, 0.00, 0.00)        |
+| **(1, 1)** | (0.47, 1.00, 0.00)        |
 
-#### Cálculo de la suma de componentes
+#### Cálculo del error cuadŕatico medio
 
-Al sumar todas las componentes y dividir por el total de canales, se obtiene:
+![](images/equations/mse_example_1.png)
 
-![](images/equations/equation1.png)
+#### Cálculo de fitness
 
-Luego `F=0.6898`
+![](images/equations/fitness_example_1.png)
 
 ### Ejemplo 2: Imágenes similares
 
@@ -114,20 +157,30 @@ Luego `F=0.6898`
 
 #### Los píxeles de la diferencia toman los siguientes valores (R, G, B):
 
-- **(0, 0)** = (72, 47, 0)
-- **(0, 1)** = (17, 30, 0)
-- **(1, 0)** = (52, 0, 0)
-- **(1, 1)** = (116,0, 0)
+| Posición   | Pixel diferencia absoluta |
+| ---------- | ------------------------- |
+| **(0, 0)** | (0.28, 0.18, 0.00)        |
+| **(0, 1)** | (0.06, 0.11, 0.00)        |
+| **(1, 0)** | (0.20, 0.00, 0.00)        |
+| **(1, 1)** | (0.45, 0.00, 0.00)        |
 
-#### Cálculo de la suma de componentes
+#### Cálculo del error cuadŕatico medio
 
-Al sumar todas las componentes y dividir por el total de canales, se obtiene:
+![](images/equations/mse_example_2.png)
 
-![](images/equations/equation2.png)
+#### Cálculo de fitness
 
-Luego `F=0.8908`
+![](images/equations/fitness_example_2.png)
 
-Nótese que es posible que imágenes completamente distintas obtengan el mismo valor de **F**, esto se debe a que las tres componentes son tratadas de igual manera.
+Nótese que es posible que imágenes completamente distintas obtengan el mismo valor de **f**, esto se debe a que las tres componentes son tratadas de igual manera.
+
+### Justificación de MSE como algoritmo para calcular fitness
+
+Como se mencioné previamente, la métrica de evaluación será delta E, calculada en el espacio de color CIELab. Aunque esta métrica ofrece una mayor precisión en la comparación perceptual de imágenes, es computacionalmente costosa. Utilizarla directamente como función de fitness ralentizaría significativamente el algoritmo.
+
+He observado que en otros proyectos se emplea el error cuadrático medio (MSE) como función de fitness en algoritmos genéticos, logrando resultados satisfactorios.
+
+Cabe aclarar que los inconvenientes asociados con el uso de MSE pueden mitigarse si los colores de los individuos son seleccionados adecuadamente, lo cual explicaré en detalle en la siguiente sección.
 
 ## Flujo del algoritmo
 
@@ -141,7 +194,7 @@ atributos aleatorizados:
 - Escala
 - Rotación
 
-Nótese que el tinte de los individuos nunca será aleatorizado, esto será fundamental para reducir los tiempos de convergencia del algoritmo. En lugar de aleatorizar el tinte, se calculará el color promedio de la sub-imagen que ocupe el individuo, y se utilizará este color como tinte del individuo. Esto es sumamente importante y necesario, teniendo en cuenta que la función de fitness puede dar valores iguales para texturas con colores distintos.
+Nótese que el **tinte** de los individuos nunca será aleatorizado, esto será fundamental para reducir los tiempos de convergencia del algoritmo. En lugar de aleatorizar el tinte, se calculará el color promedio de la sub-imagen que ocupe el individuo, y se utilizará este color como tinte del individuo. Esto es sumamente importante y necesario, teniendo en cuenta que la función de fitness puede dar valores iguales para texturas con colores distintos.
 
 ### Operadores
 
@@ -155,11 +208,27 @@ Tanto la textura, como la posición, escala y rotación podrán mutar con cierta
 
 #### Elitismo
 
-Se utilizará elitismo sobre cierto porcentaje de la población actual para no perder buenos individuos. El resto de los individuos será creado mediante el crossover.
+Se utilizará elitismo sobre la población para no perder buenos individuos.
+
+### Criterios de Finalización
+
+- **Número máximo de generaciones**: El algoritmo se detendrá tras un número predefinido de generaciones, lo que permite limitar el tiempo de ejecución.
+
+- **Convergencia**: Si el mejor individuo de la población no mejora su fitness después de un número determinado de generaciones consecutivas, se considerará que el algoritmo ha convergido y se detendrá.
+
+- **Fitness objetivo**: Si el fitness del mejor individuo alcanza un valor suficientemente cercano al ideal (una diferencia mínima con respecto a la imagen objetivo), se dará por finalizado el proceso.
 
 # Generación de la imagen
 
-Como ya detalle previamente, el algoritmo genético se encarga de buscar un individuo bueno para poder agregarlo a la imagen. Como el individuo solo representa una de las sub-imágenes que componen al resultado, se realizarán múltiples ejeuciones del algoritmo genético, de tal modo que con cada ejecución, la imagen será cada vez más parecida a la objetivo.
+La imagen final se generará mediante iteraciones sucesivas y acumulativas del algoritmo genético.
+
+### Algoritmo
+
+1. Se crea una imagen negra, **Imagen<sub>0</sub>**, **Imagen<sub>i</sub>** = **Imagen<sub>0</sub>**.
+2. Se ejecuta el algoritmo genético sobre **Imagen<sub>i</sub>**.
+3. Se obtiene el mejor individuo y lo renderiza sobre **Imagen<sub>i</sub>**, obteniendo una nueva imagen **Imagen<sub>(i+1)</sub>**.
+4. Si se cumple la **_condición de corte_**, la generación de la imagen termina.
+5. Vuelve al paso 2, pero con **Imagen<sub>(i+1)</sub>**.
 
 <p align="center">
   <img src="images/sample/sample-lod-0.png" width="200" />
@@ -168,10 +237,17 @@ Como ya detalle previamente, el algoritmo genético se encarga de buscar un indi
   <img src="images/sample/sample-lod-3.png" width="200" />
 </p>
 
+Como el individuo solo representa una de las sub-imágenes que componen al resultado, se realizarán múltiples ejeuciones del algoritmo genético, de tal modo que con cada ejecución, la imagen será cada vez más parecida a la objetivo.
+
+En este proyecto, como he mencionado en la sección de _Métrica_, se evaluarán dos **_condiciones de corte_**.
+
+- Cantidad máxima de objetos.
+- Valor máximo de la métrica utilizada.
+
 # Justificación
 
 El problema a resolver, es de búsqueda local, no se busca la mejor solución porque esa mejor solución es la imagen objetivo, la cuál se ingresa como parámetro al algoritmo. Se busca un máximo (de similutud) local.
-Considero que un algoritmo genético rendirá mejor en este problema que hill climbing y simmulated annealing porque mantiene diversidad, evitando caer en óptimos locales, además gracias al crossover y la mutación será posible ampliar más el espacio de soluciones y potencialmente descubriendo mejores soluciones. Hill climbing es greedy y puede atascarse, y SA explora lentamente con una solución, los GA equilibran la exploración y la explotación de manera efectiva, haciéndolos más robustos para tareas complejas como la generación de imágenes.
+Considero que un algoritmo genético rendirá mejor en este problema que el algoritmo aleatorio porque mantiene diversidad, evitando caer en óptimos locales, además gracias al crossover y la mutación será posible ampliar más el espacio de soluciones y potencialmente descubriendo mejores soluciones.
 
 Tras realizar investigaciones, un algoritmo de deep learning podría rendir mejor que un genético en este caso, pero no cuento con los conocimientos necesarios sobre el algoritmo, y el proyecto ya resulta ser desafiante con algoritmos genéticos.
 
@@ -179,16 +255,17 @@ Personalmente me resulta un proyecto muy interesante y desafiante en varios aspe
 
 # Listado de actividades
 
-1. _Código fuente base para poder desarrollar el algoritmo en C++ usando OpenGL_ [5 días]
-2. _Implementación del renderizador de imágenes_ [2 días]
-3. _Implementación de la función de Fitness_ [3 días]
-4. _Implementación de individuos y la obtención de colores por sub-regiones_ [1 día]
-5. _Puesta a punto del código fuente de base para el algoritmo genético_ [3 días]
-6. _Integración del algoritmo genético con el proceso secuencial de generación de imagen_ [2 día]
-7. _Análisis de los resultados_ [2 día]
-8. _Optimizaciones y mejoras del algoritmo_ [4 días]
-9. _Recopilación de estadísticas finales_ [1 día]
-10. _Escritura del informe_ [9 días]
+1. _Recopilación de bibliografía y/o ejemplos del problema a resolver._ [4 días]
+2. _Código fuente base para poder desarrollar el algoritmo_ [5 días]
+3. _Implementación del renderizador de imágenes_ [2 días]
+4. _Implementación de la función de Fitness_ [3 días]
+5. _Implementación de individuos y la obtención de colores por sub-regiones_ [1 día]
+6. _Puesta a punto del código fuente de base para el algoritmo genético_ [3 días]
+7. _Integración del algoritmo genético con el proceso secuencial de generación de imagen_ [2 día]
+8. _Análisis de los resultados_ [2 día]
+9. _Optimizaciones y mejoras del algoritmo_ [4 días]
+10. _Recopilación de estadísticas finales_ [1 día]
+11. _Escritura del informe_ [7 días]
 
 Las actividades no son secuenciales, es decir que hay superposición de actividades.
 
@@ -199,7 +276,8 @@ gantt
     title Plan de Desarrollo de GAFSIR
     dateFormat  18-11-2024
     section Desarrollo
-    Código fuente base para el algoritmo   :a1, 18-11-2024, 5d
+    Recopilación de bibliografía y/o ejemplos del problema a resolver   :a0, 18-11-2024, 4d
+    Código fuente base para el algoritmo   :a1, after a0, 5d
     Implementación del renderizador de imágenes :a2, after a1, 2d
     Implementación de la función de Fitness :a3, after a1, 3d
     Implementación de individuos y colores por sub-regiones :a4, after a3, 1d
@@ -208,7 +286,7 @@ gantt
     Análisis de los resultados :a7, after a6, 2d
     Optimizaciones y mejoras del algoritmo :a8, after a7, 4d
     Recopilación de estadísticas finales :a9, after a8, 1d
-    Escritura del informe :a10, after a7, 9d
+    Escritura del informe :a10, after a7, 7d
 ```
 
 El cronograma de actividades estimado, comienza el día 18-11-2024, y termina el 16-12-2024, con un total de 29 días. El objetivo sería asistir al sexto llamado de mesas.
@@ -217,6 +295,23 @@ El cronograma de actividades estimado, comienza el día 18-11-2024, y termina el
 
 <a href="https://www.youtube.com/watch?v=6aXx6RA1IK4">Inspiración del proyecto</a>
 
-Artificial Intelligence A Modern Approach, Third Edition
+Blibliografía:
 
-Introduction to Evolutionary Computing, Second Edition
+- Artificial Intelligence A Modern Approach, Third Edition
+
+- Introduction to Evolutionary Computing, Second Edition
+- [What is Delta E? And Why Is It Important for Color Accuracy? ](https://www.viewsonic.com/library/creative-work/what-is-delta-e-and-why-is-it-important-for-color-accuracy/)
+- [Formulación matemática de _delta e_](http://zschuessler.github.io/DeltaE/learn/)
+
+Papers y proyectos:
+
+- [Genetic algorithm for image recreation](https://medium.com/@sebastian.charmot/genetic-algorithm-for-image-recreation-4ca546454aaa). Utilización de _delta e_.
+
+- [Grow Your Own Picture Genetic Algorithms & Generative Art](https://chriscummins.cc/s/genetics/#). Aplicación web para generar imagen con algoritmos genéticos.
+
+- [Procedural paintings with genetic evolution algorithm](https://shahriyarshahrabi.medium.com/procedural-paintings-with-genetic-evolution-algorithm-6838a6e64703). Cálculo de métrica con _delta e_ sobre el espacio [_CIELab_](https://en.wikipedia.org/wiki/CIELAB_color_space), mismos atributos genéticos propuestos en este proyecto y paralelización con [_compute shaders_](https://www.khronos.org/opengl/wiki/Compute_Shader).
+
+- [Genetic drawing](https://github.com/anopara/genetic-drawing). Código fuente para replicar imágenes como pinturas.
+
+- [EllipScape: A Genetic Algorithm Based Approach to Non-Photorealistic Colored Image Reconstruction for Evolutionary Art](https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1613&context=hicss-57). Algoritmo genético completamente distito, pero utiliza como función de fitness y métrica _Peak Signal-to-Noise_
+  Ratio (PSNR). Se muestran resultados en cuanto a los tiempos de ejecución y como cambia la función de fitness a lo largo de las generaciones.
