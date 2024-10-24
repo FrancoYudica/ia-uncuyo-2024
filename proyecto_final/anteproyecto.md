@@ -8,15 +8,13 @@ Franco Yudica
 
 [![](images/sample/sample-lod-3.png)](https://www.youtube.com/watch?v=6aXx6RA1IK4)
 
-El objetivo de este proyecto es desarrollar un método para generar imágenes _transformadas estéticamente_ utilizando técnicas de computación evolutivas. Al aplicar un algoritmo genético para replicar imágenes objetivo a través de modificaciones iterativas, se busca no solo aproximar la imagen original, sino también explorar interpretaciones visuales únicas, diferentes a otras tales como las foto mosaicos, pointillism, pixelart, entre otros.
-
-Además, se implementará un algoritmo aleatorio como _baseline_.
+En este proyecto se busca desarrollar un método para generar imágenes _transformadas estéticamente_ utilizando técnicas de computación evolutivas. Al aplicar un algoritmo genético para replicar una imagen a través de modificaciones iterativas, se busca no solo aproximar la imagen original, sino también explorar una estética única, diferente a otras tales como las foto mosaicos, pointillism, pixelart, entre otros.
 
 # Objetivos
 
 Dada una _imagen objetivo_, el algoritmo debe ser capaz de generar una imagen, con características similares, tanto en las formas como en los colores y lo único que cambie sea la estética.
 
-En este proyecto se implementarán dos enfoques para la generación de imágenes: uno basado en un _algoritmo aleatorio_ y otro utilizando un _algoritmo genético_. Para evaluar la calidad de las imágenes generadas, será esencial definir una métrica que mida la diferencia entre la imagen final generada por cada algoritmo y la imagen objetivo. A partir de los resultados, se determinará si el uso de algoritmos genéticos aporta ventajas significativas en el proceso de generación de imágenes.
+En este proyecto se implementarán dos enfoques para la generación de imágenes: uno basado en un _algoritmo aleatorio_, el cuál servirá como _baseline_, y otro utilizando un _algoritmo genético_. Para evaluar la calidad de las imágenes generadas, será esencial definir una métrica que mida la diferencia entre la imagen final generada por cada algoritmo y la imagen objetivo. A partir de los resultados, se determinará si el uso de algoritmos genéticos aporta ventajas significativas en el proceso de generación de imágenes.
 
 # Alcance
 
@@ -255,17 +253,19 @@ Personalmente me resulta un proyecto muy interesante y desafiante en varios aspe
 
 # Listado de actividades
 
-1. _Recopilación de bibliografía y/o ejemplos del problema a resolver._ [4 días]
-2. _Código fuente base para poder desarrollar el algoritmo_ [5 días]
-3. _Implementación del renderizador de imágenes_ [2 días]
-4. _Implementación de la función de Fitness_ [3 días]
-5. _Implementación de individuos y la obtención de colores por sub-regiones_ [1 día]
-6. _Puesta a punto del código fuente de base para el algoritmo genético_ [3 días]
-7. _Integración del algoritmo genético con el proceso secuencial de generación de imagen_ [2 día]
-8. _Análisis de los resultados_ [2 día]
-9. _Optimizaciones y mejoras del algoritmo_ [4 días]
-10. _Recopilación de estadísticas finales_ [1 día]
-11. _Escritura del informe_ [7 días]
+1. _Recopilación de bibliografía:_ 3 días
+2. _Código fuente base:_ 3 días
+3. _Implementación del renderizador:_ 2 días
+4. _Implementación de la función de Fitness:_ 2 días
+5. _Implementación de la métrica:_ 3 días
+6. _Implementación de individuos y colores:_ 1 día
+7. _Puesta a punto del código base:_ 3 días
+8. _Integración del algoritmo aleatorio:_ 1 día
+9. _Integración del algoritmo genético:_ 3 días
+10. _Análisis de los resultados:_ 2 días
+11. _Optimizaciones y mejoras:_ 4 días
+12. _Recopilación de estadísticas:_ 2 días
+13. _Escritura del informe:_ 7 días
 
 Las actividades no son secuenciales, es decir que hay superposición de actividades.
 
@@ -273,20 +273,22 @@ Las actividades no son secuenciales, es decir que hay superposición de activida
 
 ```mermaid
 gantt
-    title Plan de Desarrollo de GAFSIR
-    dateFormat  18-11-2024
-    section Desarrollo
-    Recopilación de bibliografía y/o ejemplos del problema a resolver   :a0, 18-11-2024, 4d
-    Código fuente base para el algoritmo   :a1, after a0, 5d
-    Implementación del renderizador de imágenes :a2, after a1, 2d
-    Implementación de la función de Fitness :a3, after a1, 3d
-    Implementación de individuos y colores por sub-regiones :a4, after a3, 1d
-    Puesta a punto del código para algoritmo genético :a5, after a4, 3d
-    Integración del algoritmo genético :a6, after a5, 2d
-    Análisis de los resultados :a7, after a6, 2d
-    Optimizaciones y mejoras del algoritmo :a8, after a7, 4d
-    Recopilación de estadísticas finales :a9, after a8, 1d
-    Escritura del informe :a10, after a7, 7d
+    title Cronograma del proyecto
+    dateFormat  DD-MM-YYYY
+    section Tareas
+    Recopilación de bibliografía            :active,  des1, 18-11-2024, 3d
+    Código fuente base                      :         des2, after des1, 3d
+    Implementación del renderizador         :         des3, after des2, 2d
+    Implementación de la función de Fitness :         des4, after des3, 2d
+    Implementación de la métrica            :         des5, after des4, 3d
+    Implementación de individuos y colores  :         des6, after des5, 1d
+    Puesta a punto del código base          :         des7, after des6, 3d
+    Integración del algoritmo aleatorio     :         des8, after des7, 1d
+    Integración del algoritmo genético      :         des9, after des7, 3d
+    Análisis de los resultados              :         des10, after des8, 2d
+    Optimizaciones y mejoras                :         des11, after des8, 4d
+    Recopilación de estadísticas            :         des12, after des8, 2d
+    Escritura del informe                   :         des13, after des8, 7d
 ```
 
 El cronograma de actividades estimado, comienza el día 18-11-2024, y termina el 16-12-2024, con un total de 29 días. El objetivo sería asistir al sexto llamado de mesas.
